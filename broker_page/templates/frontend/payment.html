@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment | Broker.Page</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-family: Arial, sans-serif;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            padding: 50px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    {% csrf_token %}
+    <div id="loading" class="loading">
+        <h2>Loading Payment Gateway...</h2>
+        <p>Please wait while we redirect you to the payment page.</p>
+    </div>
+    
+    <div id="error" class="error" style="display: none;">
+        <h2>Payment Gateway Error</h2>
+        <p>There was an issue loading the payment gateway.</p>
+        <a href="{% url 'payment_cancelled' %}" style="color: #007bff; text-decoration: none;">Click here to go back</a>
+    </div>
+
+    <script>
+        // Global error handler
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            console.error('JavaScript Error:', msg, 'at', url, 'line', lineNo);
+            console.error('Error object:', error);
+            return false;
+        };
+
+        // Check if Razorpay loaded properly
+        if (typeof Razorpay === 'undefined') {
+            console.error('Razorpay not loaded');
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        } else {
+            console.log('Razorpay loaded successfully');
+            
+            var options = {
+                "key": "{{ razorpay_key_id }}",
+                "amount": "{{ amount }}",
+                "currency": "{{ currency }}",
+                "name": "Broker.Page",
+                "description": "Broker Registration Fee",
+                "order_id": "{{ order_id }}",
+                "handler": function (response) {
+                    console.log('Payment successful:', response);
+                    
+                    // Validate response data
+                    if (!response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
+                        console.error('Invalid payment response:', response);
+                        alert('Payment response is invalid. Please try again.');
+                        window.location.href = "{% url 'payment_cancelled' %}";
+                        return;
+                    }
+                    
+                    // Submit payment details to server
+                    var form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = "{% url 'payment_handler' %}";
+                    
+                    // Add CSRF token
+                    var csrf = document.createElement('input');
+                    csrf.type = 'hidden';
+                    csrf.name = 'csrfmiddlewaretoken';
+                    var csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
+                    if (!csrfElement) {
+                        console.error('CSRF token not found');
+                        alert('Security token not found. Please refresh the page and try again.');
+                        window.location.href = "{% url 'payment_cancelled' %}";
+                        return;
+                    }
+                    csrf.value = csrfElement.value;
+                    form.appendChild(csrf);
+                    
+                    // Add payment details
+                    var paymentId = document.createElement('input');
+                    paymentId.type = 'hidden';
+                    paymentId.name = 'razorpay_payment_id';
+                    paymentId.value = response.razorpay_payment_id;
+                    form.appendChild(paymentId);
+                    
+                    var orderId = document.createElement('input');
+                    orderId.type = 'hidden';
+                    orderId.name = 'razorpay_order_id';
+                    orderId.value = response.razorpay_order_id;
+                    form.appendChild(orderId);
+                    
+                    var signature = document.createElement('input');
+                    signature.type = 'hidden';
+                    signature.name = 'razorpay_signature';
+                    signature.value = response.razorpay_signature;
+                    form.appendChild(signature);
+                    
+                    document.body.appendChild(form);
+                    console.log('Submitting payment form...');
+                    form.submit();
+                },
+                "modal": {
+                    "ondismiss": function() {
+                        console.log('Payment modal dismissed');
+                        // Handle modal dismissal (user closed the popup)
+                        window.location.href = "{% url 'payment_cancelled' %}";
+                    }
+                },
+                "cancel": function() {
+                    console.log('Payment cancelled by user');
+                    // Handle payment cancellation
+                    window.location.href = "{% url 'payment_cancelled' %}";
+                },
+                "prefill": {
+                    "name": "{{ user_data.full_name }}",
+                    "email": "{{ user_data.email }}",
+                    "contact": "{{ user_data.mobile }}"
+                },
+                "theme": {
+                    "color": "#F37254"
+                }
+            };
+            
+            console.log('Payment options:', options);
+            
+            try {
+                var rzp1 = new Razorpay(options);
+                document.getElementById('loading').style.display = 'none';
+                console.log('Opening Razorpay modal...');
+                rzp1.open();
+            } catch (error) {
+                console.error('Error opening Razorpay:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

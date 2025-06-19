@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice - {{ invoice_number }}</title>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .invoice-box {
+      background: #fff;
+      padding: 30px;
+      border: 1px solid #ddd;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .status-paid {
+      background-color: #fd3837;
+      color: white;
+      padding: 5px 10px;
+      font-weight: bold;
+      display: inline-block;
+      border-radius: 3px;
+    }
+
+    .invoice-total {
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .amount-due {
+      background-color: #f1f1f1;
+      padding: 15px;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: right;
+      border-radius: 5px;
+    }
+
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .invoice-table th {
+      background-color: #f2f1f1;
+      font-weight: bold;
+    }
+
+    .row {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .col-sm-6 {
+      flex: 1;
+    }
+
+    .text-end {
+      text-align: right;
+    }
+
+    .mb-4 {
+      margin-bottom: 20px;
+    }
+
+    .mb-3 {
+      margin-bottom: 15px;
+    }
+
+    .mb-2 {
+      margin-bottom: 10px;
+    }
+
+    .mb-1 {
+      margin-bottom: 5px;
+    }
+
+    .mb-0 {
+      margin-bottom: 0;
+    }
+
+    .mt-2 {
+      margin-top: 10px;
+    }
+
+    .mt-3 {
+      margin-top: 15px;
+    }
+
+    .me-2 {
+      margin-right: 10px;
+    }
+
+    .text-muted {
+      color: #6c757d;
+    }
+
+    .table-light {
+      background-color: #f8f9fa;
+    }
+
+    .d-flex {
+      display: flex;
+    }
+
+    .justify-content-end {
+      justify-content: flex-end;
+    }
+
+    .align-items-center {
+      align-items: center;
+    }
+
+    .strong {
+      font-weight: bold;
+    }
+
+    .small {
+      font-size: 0.875em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="invoice-box">
+    <div class="row mb-4">
+      <div class="col-sm-6">
+        <h5 style="margin: 0 0 10px 0;"><strong>Broker.Page</strong></h5>
+        <p class="mb-0">Plot No 3, Khasra-385, <br> Ground Floor, 100 FT Road, <br>Ghitorni, Delhi - 110030</p>
+      </div>
+      <div class="col-sm-6 text-end">
+        <p class="mb-1"><strong>Billed On:</strong> {{ billed_date }}</p>
+        <p class="mb-1"><strong>Due On:</strong> {{ due_date }}</p>
+        <p class="mb-1"><strong>Terms:</strong> On-Receipt</p>
+        <p class="mb-0"><strong>Invoice Number:</strong> {{ invoice_number }}</p>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-sm-6">
+        <p class="mb-1"><strong>Billed To:</strong></p>
+        <p class="mb-0">{{ user.full_name }}<br>{{ user.office_address }}<br><strong>Mobile Number</strong>: {{ user.mobile }}</p>
+      </div>
+      <div class="col-sm-6 text-end">
+        <div class="d-flex justify-content-end align-items-center">
+          <div class="status-paid me-2">PAID</div>
+          <div>On {{ payment_date }}</div>
+        </div>
+        <div class="invoice-total mt-2">₹{{ amount }}.00 <small class="text-muted">INR</small></div>
+      </div>
+    </div>
+
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Registration fee: Broker.Page</td>
+          <td>1</td>
+          <td>₹{{ amount }}.00</td>
+          <td>₹{{ amount }}.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="row text-end mb-2">
+      <div class="col-sm-6"></div>
+      <div class="col-sm-6">
+        <p class="mb-1"><strong>Subtotal:</strong> ₹{{ amount }}.00</p>
+        <p class="mb-1"><strong>Total:</strong> ₹{{ amount }}.00</p>
+        <p class="mb-1"><strong>Amount Paid:</strong> ₹{{ amount }}.00</p>
+      </div>
+    </div>
+
+    <div class="amount-due">
+      Amount Due: ₹0.00
+    </div>
+
+    <div class="text-end mt-3">
+      <p class="mb-1 text-muted small">All amounts in Indian Rupees (INR)</p>
+      <p class="mb-0 text-muted small">Declaration: Note: This amount is not refundable.</p>
+    </div>
+  </div>
+</body>
+
+</html> 

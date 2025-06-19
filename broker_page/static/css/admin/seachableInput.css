@@ -1,0 +1,51 @@
+.select {
+    position: relative;
+    width: 100%;
+    background-color: var(--white);
+}
+.select .select-control {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    cursor: pointer;    
+    width: 100%;
+}
+
+.select .select-control.focus {
+    outline-color: #4d90fe;
+    outline-offset: -2px;
+    outline-style: auto;
+    outline-width: 5px;
+    width: 100%;
+}
+.select .select-control .select-control-caret {
+    position: absolute;
+    right: 12px;
+    line-height: 1.5em;
+}
+.select .select-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border: 1px solid #1e90ff;
+    border-radius: 7px;
+    background-color: var(--white);
+    font-family: var(--main-font);
+    padding: 6px;
+}
+.select .select-list .select-list-searchbox {
+    margin: 10px;
+    width: calc(100% - 20px);
+}
+.select .select-list .select-list-item {
+    background: white;
+    padding: 6px 12px;
+}
+.select .select-list .select-list-item:hover {
+    background: #1e90ff;
+    color: white;
+    border-radius: 6px;
+}

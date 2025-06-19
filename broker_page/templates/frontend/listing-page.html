@@ -1,0 +1,272 @@
+{% load static %}
+{% load broker_filters %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listing Page | Broker.Page</title>
+    <!-- BootStrap Links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Animate JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <nav class="navbar wow animate__animated animate__fadeIn navbar-expand-lg bg-body-tertiary">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/logo.svg' %}"
+                        alt="Broker.Page Logo"></a>
+                <a href="{% url 'login' %}" class="login-mob-btn"><img src="{% static 'images/login.svg' %}"
+                        alt="Login"> Login</a>
+                <div class="collapse navbar-collapse me-auto" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="border-btn me-3" aria-current="page" href="{% url 'login' %}">Broker's Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="dark-btn" aria-current="page" href="{% url 'agent_registration' %}">Broker
+                                Registration</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <!-- search result bar -->
+            <div class="modify-search-section wow animate__animated animate__fadeIn">
+                <div class="search-section">
+                    <div class="toggle-btn-section">
+                        <button class="toggle-btn active" data-search-type="mobile">
+                            <i class="bi bi-telephone-fill" style="font-size: 15px; margin-right: 2px;"></i> Mobile
+                            Number
+                        </button>
+                        <button class="toggle-btn" data-search-type="colony">
+                            <i class="bi bi-geo-alt-fill" style="font-size: 15px; margin-right: 2px;"></i> Colony
+                        </button>
+                    </div>
+                    <form method="GET" action="{% url 'search_brokers' %}" class="search-bar m-0">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <img src="{% static 'images/search.svg' %}" alt="Search">
+                            </span>
+                            <input type="text" name="q" class="form-control search-input modify-search-input"
+                                placeholder="Search" value="{{ request.GET.q }}" autocomplete="off">
+                            <input type="hidden" name="search_type" id="searchType"
+                                value="{{ request.GET.search_type|default:'mobile' }}">
+
+                            <!-- Search button with responsive content -->
+                            <button type="submit" class="input-group-text search-btn" id="searchBtn">
+                                <!-- Icon for mobile (visible only on small screens) -->
+                                <i class="bi bi-search d-block d-sm-none"></i>
+                                <!-- Text for desktop (hidden on small screens) -->
+                                <span class="d-none d-sm-inline">Search</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Listing Section  -->
+            <div class="listings">
+                <p class="m-0">Showing {{ brokers.count }} of {{ total_brokers }} Real Estate Agents</p>
+                <div class="result-section">
+                    {% for broker in brokers %}
+                    <div class="card profile-card wow animate__animated animate__fadeIn" data-profile-url="{% url 'broker_profile' slug=broker|profile_slug %}">
+                        <div class="card-head">
+                            <div class="user-details">
+                                <div class="profile-photo">
+                                    {% if broker.profile_photo %}
+                                    <img src="{{ broker.profile_photo.url }}" alt="{{ broker.full_name }}">
+                                    {% else %}
+                                    <img src="{% static 'images/profile-photo.jpg' %}" alt="Default Profile">
+                                    {% endif %}
+                                </div>
+                                <div class="user-name">
+                                    <h5 class="name m-0">{{ broker.full_name }}</h5>
+                                    <h5 class="experience m-0">
+                                        {% if broker.date_joined %}
+                                        {% with years_in_business=broker.date_joined|date:"Y" %}
+                                        {% if years_in_business == "2025" %}
+                                        New Professional
+                                        {% elif years_in_business == "2024" %}
+                                        1+ Years in Business
+                                        {% else %}
+                                        Experienced Professional
+                                        {% endif %}
+                                        {% endwith %}
+                                        {% else %}
+                                        Experienced Professional
+                                        {% endif %}
+                                    </h5>
+                                </div>
+                            </div>
+                            <div class="user-company">
+                                <p class="m-0">{{ broker.company|default:"Independent Broker" }}</p>
+                            </div>
+                            <div class="location">
+                                <p class="m-0 d-flex justify-content-between align-items-center">
+                                    <img src="{% static 'images/location.svg' %}" alt="Location">
+                                    <span>{{ broker.residence_colony|default:"Location not specified" }}</span>
+                                </p>
+                                {% if broker.google_maps_url %}
+                                <a href="{{ broker.google_maps_url }}" target="_blank"
+                                    class="border-start ps-2 text-primary">
+                                    Get Direction <img src="{% static 'images/direction.svg' %}" alt="Direction">
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="card-btn mt-2 d-flex justify-content-between align-items-center">
+                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                    <a href="tel:{{ broker.mobile }}" class="primary-btn">
+                                        <img class="me-1" src="{% static 'images/white-call.svg' %}" alt="Call">Call
+                                    </a>
+                                    {% if broker.whatsapp %}
+                                    <a href="https://wa.me/{{ broker.whatsapp }}" target="_blank" class="secondary-btn">
+                                        <img class="me-1" src="{% static 'images/lined-whatsapp.svg' %}"
+                                            alt="WhatsApp">WhatsApp
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                <div class="social-icons d-flex justify-content-between align-items-center gap-1">
+                                    {% if broker.facebook_url %}
+                                    <a href="{{ broker.facebook_url }}" target="_blank"><img
+                                            src="{% static 'images/facebook-c.svg' %}" alt="Facebook"></a>
+                                    {% endif %}
+                                    {% if broker.instagram_url %}
+                                    <a href="{{ broker.instagram_url }}" target="_blank"><img
+                                            src="{% static 'images/instagram-c.svg' %}" alt="Instagram"></a>
+                                    {% endif %}
+                                    {% if broker.linkedin_url %}
+                                    <a href="{{ broker.linkedin_url }}" target="_blank"><img
+                                            src="{% static 'images/linkedin-c.svg' %}" alt="LinkedIn"></a>
+                                    {% endif %}
+                                    {% if broker.youtube_url %}
+                                    <a href="{{ broker.youtube_url }}" target="_blank"><img
+                                            src="{% static 'images/youtube-c.svg' %}" alt="YouTube"></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% empty %}
+                    <div class="text-center w-100 py-5">
+                        <h4>No brokers found</h4>
+                        <p>Try adjusting your search criteria or browse all brokers.</p>
+                        <a href="{% url 'search_brokers' %}" class="dark-btn m-auto" style="width: fit-content;">View All Brokers</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <footer class="container-fluid">
+            <div class="container">
+                <div class="footerSection">
+                    <a href="{% url 'home' %}"><img src="{% static 'images/logo.svg' %}" alt="Footer Logo"></a>
+                    <div class="footer-col">
+                        <div>
+                            <h6>Quick Link</h6>
+                            <div class="footer-list">
+                                <a href="#">About</a>
+                                <a href="#">Contact</a>
+                            </div>
+                        </div>
+                        <div>
+                            <h6>Company</h6>
+                            <div class="footer-list">
+                                <a href="#">Privacy Policy</a>
+                                <a href="#">Terms & Conditions</a>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="#" class="text-white mb-2"><img src="{% static 'images/red-mail.svg' %}"
+                                    alt="Email"> info@broker.page</a>
+                            <a href="#" class="text-white"><img src="{% static 'images/red-call.svg' %}" alt="Phone">
+                                +91 9876543210</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p class="m-0">Copyright © 2023 Broker.Page. All rights reserved.</p>
+                    <p class="m-0">Reg No. DEL / 1025 / 05 / 2025</p>
+                    <div class="social-media d-flex gap-2">
+                        <a href="#"><img src="{% static 'images/facebook.svg' %}" alt="Facebook"></a>
+                        <a href="#"><img src="{% static 'images/insta.svg' %}" alt="Instagram"></a>
+                        <a href="#"><img src="{% static 'images/twitter.svg' %}" alt="Twitter"></a>
+                        <a href="#"><img src="{% static 'images/linkedin.svg' %}" alt="LinkedIn"></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- Jquery JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        // Toggle search type functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            const searchTypeInput = document.getElementById('searchType');
+
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Remove active class from all buttons
+                    toggleBtns.forEach(b => b.classList.remove('active'));
+
+                    // Add active class to clicked button
+                    this.classList.add('active');
+
+                    // Update hidden input value
+                    const searchType = this.getAttribute('data-search-type');
+                    searchTypeInput.value = searchType;
+
+                    // Update placeholder text
+                    const searchInput = document.querySelector('.search-input');
+                    if (searchType === 'mobile') {
+                        searchInput.placeholder = 'Search by mobile number';
+                    } else {
+                        searchInput.placeholder = 'Search by colony name';
+                    }
+                });
+            });
+
+            // Handle card clicks for profile navigation
+            const profileCards = document.querySelectorAll('.profile-card');
+            profileCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't navigate if clicking on buttons or links
+                    if (e.target.closest('a') || e.target.closest('button')) {
+                        return;
+                    }
+                    
+                    const profileUrl = this.getAttribute('data-profile-url');
+                    if (profileUrl) {
+                        window.location.href = profileUrl;
+                    }
+                });
+                
+                // Add cursor pointer to indicate clickable
+                card.style.cursor = 'pointer';
+            });
+        });
+    </script>
+</body>
+
+</html>

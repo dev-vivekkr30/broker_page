@@ -1,0 +1,256 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Broker.Page</title>
+    <!-- BootStrap Links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <!-- Animate JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+
+    <style>
+        .select2-container{
+            width: 400px !important;
+        }
+        .select2-container .select2-selection--single{
+            height: 100% !important;
+            border: none !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered{
+            height: 100% !important;
+            padding-top:8px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow{
+            top: 8px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear{
+            margin-top: 8px !important;
+            font-weight: 400 !important;
+            color: #9c9c9c !important;
+            font-size: 16px !important;
+        }
+        .select2-container--open .select2-dropdown--below{
+            top: 20px !important;
+            padding: 6px !important;
+            border: 1px solid #fd3837!important;
+            border-radius: 6px !important;
+            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1) !important;
+            background-color: #fff !important;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field{
+            border: 1px solid #e2e2e2 !important;
+            border-radius: 6px !important;
+            height: 42px !important;
+            padding: 6px 12px !important;
+            font-size: 16px !important;
+            font-weight: 400 !important;
+            color: #000 !important;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field:focus-visible{
+            box-shadow: none !important;
+            outline: none !important;
+        }
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable{
+            background-color: #ffe3e3 !important;
+            color: #000 !important;
+            padding: 8px 12px !important;
+            border-radius: 6px !important;
+        }
+        .select2-results__option{
+            padding: 8px 12px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__placeholder{
+            color: #bfbfbf !important;
+            font-size: 18px !important;
+            font-weight: 300 !important;    
+        }
+        @media only screen and (max-width: 772px){
+            .select2-container{
+                width: 464px !important;
+                text-align: left !important;
+            }
+        }
+        @media only screen and (max-width: 768px){
+            .select2-container{
+                width: 464px !important;
+                text-align: left !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary wow animate__animated animate__fadeIn">
+            <div class="container">
+                <a class="navbar-brand" href="#"><img src="{% static 'images/logo.svg' %}" alt="Broker.Page Logo"></a>
+                <a href="{% url 'login' %}" class="login-mob-btn"><img src="{% static 'images/login.svg' %}" alt="Login"> Login</a>
+                <div class="collapse navbar-collapse me-auto" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="border-btn me-3" aria-current="page" href="{% url 'login' %}">Broker's Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="dark-btn" aria-current="page" href="{% url 'agent_registration' %}">Broker Registration</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- hero section -->
+        <header class="heroSection container wow animate__animated animate__fadeIn">
+            <h1 class="fw-bold wow animate__animated animate__fadeIn">Find your verified broker</h1>
+            <p>Welcome to Broker.Page – platform for accessing Real Estate Professionals</p>
+            <div class="search-section wow animate__animated animate__fadeIn">
+                <div class="toggle-btn-section">
+                    <button class="toggle-btn active" data-search-type="mobile">
+                        <i class="bi bi-telephone-fill" style="font-size: 15px; margin-right: 2px;"></i> Mobile Number
+                    </button>
+                    <button class="toggle-btn" data-search-type="colony">
+                        <i class="bi bi-geo-alt-fill" style="font-size: 15px; margin-right: 2px;"></i> Colony
+                    </button>
+                </div>
+                <form method="GET" action="{% url 'search_brokers' %}" class="search-bar">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <img src="{% static 'images/search.svg' %}" alt="Search">
+                        </span>
+                        <input type="text" name="q" class="form-control search-input" placeholder="Search by mobile number" aria-label="Search" id="mobileSearchInput">
+                        <select name="q" class="form-control" id="colonySearchInput" style="display:none; width:100%">
+                            <option></option>
+                            {% for colony in colonies %}
+                                <option value="{{ colony.name }}">{{ colony.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="hidden" name="search_type" id="searchType" value="mobile">
+                        <button type="submit" class="input-group-text search-btn" id="searchBtn">
+                            <i class="bi bi-search d-block d-sm-none"></i>
+                            <span class="d-none d-sm-inline">Search</span>
+                        </button>
+                    </div>
+                </form>
+                <!-- <div class="text-center mt-3">
+                    <a href="{% url 'search_brokers' %}" class="btn btn-outline-primary">View All Brokers</a>
+                </div> -->
+            </div>
+        </header>
+
+        <!-- Banner Section -->
+        <section class="bannerSection container">
+            <div class="row">
+                <div class="col-md-6 wow animate__animated animate__fadeIn">
+                    <img src="{% static 'images/banner-1.svg' %}" class="img-fluid w-100 mb-3" alt="Banner 1">
+                </div>
+                <div class="col-md-6 wow animate__animated animate__fadeIn" data-wow-delay="0.5s" data-wow-duration="1s">
+                    <img src="{% static 'images/banner-1.svg' %}" class="img-fluid w-100 mb-3" alt="Banner 2">
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Section -->
+        <footer class="container-fluid wow animate__animated animate__fadeIn">
+            <div class="container">
+                <div class="footerSection">
+                    <a href="#"><img src="{% static 'images/logo.svg' %}" alt="Footer Logo"></a>
+                    <div class="footer-col">
+                        <div>
+                            <h6>Quick Link</h6>
+                            <div class="footer-list">
+                                <a href="#">About</a>
+                                <a href="#">Contact</a>
+                            </div>
+                        </div>
+                        <div>
+                            <h6>Company</h6>
+                            <div class="footer-list">
+                                <a href="#">Privacy Policy</a>
+                                <a href="#">Terms & Conditions</a>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="#" class="text-white mb-2"><img src="{% static 'images/red-mail.svg' %}" alt="Email"> info@broker.page</a>
+                            <a href="#" class="text-white"><img src="{% static 'images/red-call.svg' %}" alt="Phone"> +91 9876543210</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p class="m-0">Copyright © 2023 Broker.Page. All rights reserved.</p>
+                    <p class="m-0">Reg No. DEL / 1025 / 05 / 2025</p>
+                    <div class="social-media d-flex gap-2">
+                        <a href="#"><img src="{% static 'images/facebook.svg' %}" alt="Facebook"></a>
+                        <a href="#"><img src="{% static 'images/insta.svg' %}" alt="Instagram"></a>
+                        <a href="#"><img src="{% static 'images/twitter.svg' %}" alt="Twitter"></a>
+                        <a href="#"><img src="{% static 'images/linkedin.svg' %}" alt="LinkedIn"></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- Jquery JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <script>
+        // Toggle search type functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtns = document.querySelectorAll('.toggle-btn');
+            const searchTypeInput = document.getElementById('searchType');
+            const mobileInput = document.getElementById('mobileSearchInput');
+            const colonyInput = document.getElementById('colonySearchInput');
+            const select2Container = () => document.querySelector('.select2-container');
+            $(colonyInput).select2({
+                placeholder: 'Select a colony',
+                allowClear: true,
+                width: '100%',
+                tags: true
+            });
+            function showMobile() {
+                mobileInput.style.display = '';
+                mobileInput.disabled = false;
+                colonyInput.style.display = 'none';
+                colonyInput.disabled = true;
+                if (select2Container()) select2Container().style.display = 'none';
+            }
+            function showColony() {
+                mobileInput.style.display = 'none';
+                mobileInput.disabled = true;
+                colonyInput.style.display = '';
+                colonyInput.disabled = false;
+                if (select2Container()) select2Container().style.display = '';
+                $(colonyInput).val(null).trigger('change');
+            }
+            // Initial state
+            showMobile();
+            toggleBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    toggleBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const searchType = this.getAttribute('data-search-type');
+                    searchTypeInput.value = searchType;
+                    if (searchType === 'mobile') {
+                        showMobile();
+                    } else {
+                        showColony();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

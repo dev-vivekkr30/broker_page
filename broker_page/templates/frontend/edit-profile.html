@@ -1,0 +1,588 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile | Broker Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+       
+    <!-- Animate JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    
+    <style>
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <div class="navbar wow animate__animated animate__fadeIn">
+            <div class="container">
+                <div class="d-flex align-items-center navbar-container">
+                    <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/logo.svg' %}" alt=""></a>
+                    <div class="user-name-mob">
+                        <h6 class="fw-semibold m-0 ps-2 border-start">Ramesh Kumar <span><img
+                                    style="max-width: 16px; margin-left: 8px;" src="images/tick.svg" alt=""></span></h6>
+                    </div>
+                </div>
+                <!-- mobile Menu -->
+                <button class="bg-transparent mobile-menu" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><img
+                        src="images/menu.svg" alt=""></button>
+
+                <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
+                    aria-labelledby="offcanvasWithBothOptionsLabel">
+                    <div class="offcanvas-header p-0 p-3">
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body pt-0">
+                        <div class="trans-bg">
+                            <div class="user-name">
+                                <div class="label">
+                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
+                                    <span>Address</span>
+                                </div>
+                                <p class="m-0 mt-1 small">Flat No-2, Ganga Block-8, Pocket-D-6, Vasant Kunj, New
+                                    Delhi-110070</p>
+                                <a href="#" class="text-primary small"><u>View Google Map location</u></a>
+                            </div>
+                        </div>
+                        <div class="trans-bg">
+                            <div class="user-name">
+                                <div class="label">
+                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
+                                    <span>Office Number</span>
+                                </div>
+                                <a href="#" class="m-0 mt-1 small">+91 9876543211</a>
+                            </div>
+                        </div>
+                        <div class="trans-bg">
+                            <div class="user-name">
+                                <div class="label">
+                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
+                                    <span>Email</span>
+                                </div>
+                                <a href="#" class="m-0 mt-1 small">info@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="trans-bg">
+                            <div class="user-name">
+                                <div class="label">
+                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
+                                    <span>Broker's Website</span>
+                                </div>
+                                <a href="#" class="m-0 mt-1 small">BrokerWebsite.com</a>
+                            </div>
+                        </div>
+                        <div class="trans-bg">
+                            <div class="social-icons d-flex justify-content-start align-items-center gap-1">
+                                <a href=""><img src="{% static 'images/share.svg' %}" alt=""></a>
+                                <a href=""><img src="{% static 'images/facebook-c.svg' %}" alt=""></a>
+                                <a href=""><img src="{% static 'images/instagram-c.svg' %}" alt=""></a>
+                                <a href=""><img src="{% static 'images/linkedin-c.svg' %}" alt=""></a>
+                                <a href=""><img src="{% static 'images/youtube-c.svg' %}" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container position-relative  wow animate__animated animate__fadeIn">
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert" id="alert-{{ forloop.counter }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <div class="sidebar p-3">
+                <div class="list-group">
+                    <button class="list-group-item list-group-item-action toggle-btn active" data-step="1"><i class="bi bi-person me-2"></i> Personal
+                        Details</button>
+                    <button class="list-group-item list-group-item-action toggle-btn" data-step="2"><i class="bi bi-telephone me-2"></i> Contact
+                        Details</button>
+                    <button class="list-group-item list-group-item-action toggle-btn" data-step="3"><i class="bi bi-building me-2"></i> Work
+                        Details</button>
+                    <button class="list-group-item list-group-item-action toggle-btn" data-step="4"><i class="bi bi-share me-2"></i> Social Media
+                        Details</button>
+                    <button class="list-group-item list-group-item-action toggle-btn" data-step="5"><i class="bi bi-info-circle me-2"></i> Other
+                        Details</button>
+                    <button class="list-group-item list-group-item-action toggle-btn" data-step="6"><i class="bi bi-receipt me-2"></i> Bills &
+                        Invoice</button>
+                    <button class="list-group-item list-group-item-action red-link"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content">
+                <form id="multiStepForm" method="post" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
+                    {% csrf_token %}
+                    <input type="hidden" id="activeTab" name="active_tab" value="1">
+                    <!-- Step 1: Personal Details -->
+                    <div class="step active wow animate__animated animate__fadeIn" id="step-1">
+                        <h4 class="mb-3 fw-semibold">Personal Details</h4>
+                        <div class="row file_uploads">
+                            <div class="col-md-6 mb-3">
+                                <div class="file-upload-row d-flex gap-2 align-items-start">
+                                    {% if broker.profile_photo %}
+                                    <a data-fancybox="gallery" href="{{ broker.profile_photo.url }}">
+                                        <img class="w-100 profilePic" src="{{ broker.profile_photo.url }}" alt="Profile Photo" style="border-radius:6px;" />
+                                    </a>
+                                    {% else %}
+                                    <img class="w-100 profilePic" src="{% static 'images/userDefaultimage.svg' %}" alt="" style="border-radius:6px;" />
+                                    {% endif %}
+                                    <div class="w-100">
+                                        <label for="profile_photo" class="form-label mb-1"><span>Upload Profile Image</span></label>
+                                        <div class="input-group w-100">
+                                            <input type="file" class="form-control border-0" id="profile_photo" name="profile_photo" accept="image/*" style="height: 33px !important;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex gap-2 align-items-start">
+                                    {% if broker.profile_video %}
+                                    <video width="220px" style="border-radius: 6px;" height="auto" controls>
+                                        <source src="{{ broker.profile_video.url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    {% endif %}
+                                    <div class="w-100">
+                                        <label for="profile_video" class="form-label mb-1">Upload Video</label>
+                                        <input type="file" class="form-control w-100" id="profile_video" name="profile_video" accept="video/*" style="height: 35px !important;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Name  <span class="text-danger">*</span></label>
+                            <input type="text" name="full_name" class="form-control" style="height: 35px !important;" value="{{ broker.full_name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" name="age" class="form-control" style="height: 35px !important;" value="{{ broker.age }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Education</label>
+                            <input type="text" name="education" class="form-control" style="height: 35px !important;" value="{{ broker.education }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Residence Colony</label>
+                            <input type="text" name="residence_colony" class="form-control" style="height: 35px !important;" value="{{ broker.residence_colony }}">
+                        </div>
+                        <div class="textarea-group">
+                            <label class="form-label">About Me</label>
+                            <textarea class="textarea-control" name="about" rows="3" maxlength="200" placeholder="About Me">{{ broker.about }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Contact Details -->
+                    <div class="step wow animate__animated animate__fadeIn" id="step-2">
+                        <h4 class="mb-3 fw-semibold">Contact Details</h4>
+                        <div class="mb-3">
+                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                            <input class="form-control" name="email" placeholder="Email" value="{{ broker.email }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                            <input class="form-control" id="mobile" name="mobile" placeholder="Mobile Number" value="{{ broker.mobile }}">
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="sameNumber">
+                            <label class="form-check-label small" for="sameNumber">Mobile & WhatsApp are the
+                                same</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">WhatsApp Number</label>
+                            <input class="form-control" id="whatsapp" name="whatsapp" placeholder="WhatsApp Number" value="{{ broker.whatsapp }}">
+                        </div>
+                        
+                    </div>
+
+                    <!-- Step 3: Work Details -->
+                    <div class="step wow animate__animated animate__fadeIn" id="step-3">
+                        <h4 class="mb-3 fw-semibold">Work Details</h4>
+                        <div class="mb-3">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" name="company" class="form-control" style="height: 35px !important;" value="{{ broker.company }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Office Address</label>
+                            <input type="text" name="office_address" class="form-control" value="{{ broker.office_address }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Google Maps URL</label>
+                            <input class="form-control" name="google_maps_url" placeholder="Google Maps" value="{{ broker.google_maps_url }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Expertise in Work (comma separated)</label>
+                            <input class="form-control" name="expertise" placeholder="Expertise" value="{{ broker.expertise }}">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Min Deal Size</label>
+                                <input class="form-control" name="min_deal_size" placeholder="Min Deal Size" value="{{ broker.min_deal_size }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Max Deal Size</label>
+                                <input class="form-control" name="max_deal_size" placeholder="Max Deal Size" value="{{ broker.max_deal_size }}">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Colonies/Area where Broker is active (Max 30)</label>
+                            <select class="form-control select2" multiple="multiple" id="colonies" name="colonies">
+                                {% for colony in all_colonies %}
+                                    <option value="{{ colony.name }}" {% if colony.name in selected_colonies %}selected{% endif %}>{{ colony.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Achievements (Max 3)</label>
+                            <div id="achievementsContainer">
+                                <div class="d-flex align-items-center mb-2">
+                                    <input class="form-control" placeholder="Achievement">
+                                </div>
+                            </div>
+                            <button type="button" class="btn-sm btn-add"
+                                onclick="addField('achievements', 3)">+</button>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Step 4: Social Media Details -->
+                    <div class="step wow animate__animated animate__fadeIn" id="step-4">
+                        <h4 class="mb-3 fw-semibold">Social Media Details</h4>
+                        <div class="mb-3">
+                            <label class="form-label">Facebook URL</label>
+                            <input class="form-control" name="facebook_url" placeholder="Facebook" value="{{ broker.facebook_url }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">LinkedIn URL</label>
+                            <input class="form-control" name="linkedin_url" placeholder="LinkedIn" value="{{ broker.linkedin_url }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Instagram URL</label>
+                            <input class="form-control" name="instagram_url" placeholder="Instagram" value="{{ broker.instagram_url }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Twitter URL</label>
+                            <input class="form-control" name="twitter_url" placeholder="Twitter" value="{{ broker.twitter_url }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">YouTube URL</label>
+                            <input class="form-control" name="youtube_url" placeholder="YouTube" value="{{ broker.youtube_url }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Website</label>
+                            <input class="form-control" name="website" placeholder="Website" value="{{ broker.website }}">
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Other Details -->
+                    <div class="step wow animate__animated animate__fadeIn" id="step-5">
+                        <h4 class="mb-3 fw-semibold">Other Details</h4>
+                        <div class="mb-3 textarea-group ">
+                            <label class="form-label">Achievements</label>
+                            <textarea class="textarea-control" name="achievements" rows="2" maxlength="200" placeholder="Achievements">{{ broker.achievements }}</textarea>
+                        </div>
+                        <div class="mb-3 textarea-group ">
+                            <label class="form-label">Listings / Mandates</label>
+                            <textarea class="textarea-control" name="listings" rows="2" maxlength="200" placeholder="Listing">{{ broker.listings }}</textarea>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-3 align-items-center btn-row mt-4">
+                        <button type="submit" class="dark-btn" id="submitBtn">
+                            <span>Save Changes</span>
+                            <span class="btn-loading" style="display: none;">
+                                <i class="bi bi-arrow-clockwise spin"></i> Saving...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+                <div class="step wow animate__animated animate__fadeIn" id="step-6">
+                    <h4 class="mb-3 fw-semibold">Billing and Subscription</h4>
+                    <p class="mb-2 border-bottom small text-muted">Subscription Details: </p>
+                    <div class="d-flex align-items-center justify-content-between renew-details">
+                        <!-- <h5 class="red-link">Plan Name</h5> -->
+                        <span class="small text-muted"><i class="bi bi-clock me-2 text-muted"></i>Next Payment Due: 01
+                            April 2026</span>
+                            <button class="btn-sm dark-btn mt-2 small">Renew Plan</button>
+                    </div>
+                    
+                    <p class="mb-2 border-bottom small text-muted">Invoice & Transaction History: </p>
+                    <div class="table-responsive mt-4">
+                        <table class="table" id="projectsTable">
+                            <thead>
+                                <tr>
+                                    <th style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;"
+                                        scope="col">S/N</th>
+                                    <th scope="col">Start Date</th>
+                                    <th scope="col">End Date</th>
+                                    <th scope="col">Amount Paid</th>
+                                    <th scope="col">Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>01</td>
+                                    <td>24-02-24</td>
+                                    <td>24-02-25</td>
+                                    <td>₹1000</td>
+                                    <td><a class="small text-decoration-underline text-primary"
+                                            href="invoice.html">View Invoice</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="container-fluid wow animate__animated animate__fadeIn">
+        <div class="container">
+            <div class="footerSection">
+                <a href="#"><img src="images/logo.svg" alt=""></a>
+                <div class="footer-col">
+                    <div>
+                        <h6>Quick Link</h6>
+                        <div class="footer-list">
+                            <a href="#">About</a>
+                            <a href="#">Contact</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h6>Company</h6>
+                        <div class="footer-list">
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Terms & Conditions</a>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="#" class="text-white mb-2"><img src="images/red-mail.svg" alt="">
+                            info@broker.page</a>
+                        <a href="#" class="text-white"><img src="images/red-call.svg" alt=""> +91 9876543210</a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p class="m-0">Copyright © 2023 Broker.Page. All rights reserved.</p>
+                <p class="m-0">Reg No. DEL / 1025 / 05 / 2025</p>
+                <div class="social-media d-flex gap-2">
+                    <a href="#"><img src="images/facebook.svg" alt=""></a>
+                    <a href="#"><img src="images/insta.svg" alt=""></a>
+                    <a href="#"><img src="images/twitter.svg" alt=""></a>
+                    <a href="#"><img src="images/linkedin.svg" alt=""></a>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- Bootstrap JS + jQuery + Select2 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Fancybox Links -->
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- datatabel -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="{% static 'js/datatable.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    if (alert && alert.parentNode) {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
+                }, 5000);
+            });
+            
+            // Restore active tab from URL parameter or default to step 1
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab') || '1';
+            activateTab(activeTab);
+        });
+        
+        // Function to activate a specific tab
+        function activateTab(stepNumber) {
+            // Remove active class from all buttons and steps
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            
+            // Add active class to the target button and step
+            const targetButton = document.querySelector(`[data-step="${stepNumber}"]`);
+            const targetStep = document.getElementById(`step-${stepNumber}`);
+            
+            if (targetButton && targetStep) {
+                targetButton.classList.add('active');
+                targetStep.classList.add('active');
+            }
+        }
+        
+        // Update tab switching to store active tab
+        document.querySelectorAll('.toggle-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const stepNumber = this.getAttribute('data-step');
+                activateTab(stepNumber);
+                
+                // Update hidden input with current active tab
+                document.getElementById('activeTab').value = stepNumber;
+            });
+        });
+        
+        Fancybox.bind('[data-fancybox="gallery"]', {
+            // Your custom options for a specific gallery
+        });
+        
+        // Profile photo preview functionality
+        document.getElementById('profile_photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Profile photo must be less than 5MB');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file');
+                    this.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImg = document.querySelector('.profilePic');
+                    if (previewImg) {
+                        previewImg.src = e.target.result;
+                        previewImg.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Profile video preview functionality
+        document.getElementById('profile_video').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Check file size (max 50MB)
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('Profile video must be less than 50MB');
+                    this.value = '';
+                    return;
+                }
+                
+                // Check file type
+                if (!file.type.startsWith('video/')) {
+                    alert('Please select a video file');
+                    this.value = '';
+                    return;
+                }
+                
+                const videoContainer = document.querySelector('.col-md-6 .d-flex');
+                if (videoContainer) {
+                    // Remove existing video if any
+                    const existingVideo = videoContainer.querySelector('video');
+                    if (existingVideo) {
+                        existingVideo.remove();
+                    }
+                    
+                    // Create new video element
+                    const video = document.createElement('video');
+                    video.width = '100px';
+                    video.style.borderRadius = '6px';
+                    video.height = 'auto';
+                    video.controls = true;
+                    
+                    const source = document.createElement('source');
+                    source.src = URL.createObjectURL(file);
+                    source.type = file.type;
+                    
+                    video.appendChild(source);
+                    video.appendChild(document.createTextNode('Your browser does not support the video tag.'));
+                    
+                    // Insert video before the file input
+                    const fileInputContainer = videoContainer.querySelector('.w-100');
+                    videoContainer.insertBefore(video, fileInputContainer);
+                }
+            }
+        });
+        
+        // Form submission handling
+        document.getElementById('multiStepForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            // Show loading state
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
+            submitBtn.disabled = true;
+            
+            // Re-enable after 5 seconds if something goes wrong
+            setTimeout(() => {
+                btnText.style.display = 'inline-block';
+                btnLoading.style.display = 'none';
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+
+        $(document).ready(function () {
+            $('#colonies').select2({
+                maximumSelectionLength: 30,
+                placeholder: 'Select colonies',
+                tags: true,
+                width: '100%'
+            });
+            // Set selected values on page load
+            var selected = JSON.parse(document.getElementById('selectedColoniesData').textContent);
+            $('#colonies').val(selected).trigger('change');
+        });
+    </script>
+</body>
+
+</html>

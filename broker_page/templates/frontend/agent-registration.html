@@ -1,0 +1,246 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration | Broker.Page</title>
+    <!-- BootStrap Links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Animate JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+</head>
+
+<body>
+    
+    <div class="container-fluid register-screen">
+        <div class="row registration-section">
+            <div class="col-md-5 p-0 regsiter-img wow animate__animated animate__fadeIn">
+                <img src="{% static 'images/register-left-img.jpg' %}" style="height: 100vh; max-width: 100%; object-fit: cover; object-position: top; width: 100%;" alt="Registration Background">
+            </div>
+            <div class="col-md-7 register-form">
+                <form method="POST" class="form-section needs-validation wow animate__animated animate__fadeIn" id="broker-form" novalidate>
+                    {% csrf_token %}
+                    <img src="{% static 'images/logo.svg' %}" class="mb-4" alt="Broker.Page Logo">
+                    <h4 class="fw-semibold">Welcome, <span class="fw-light">Broker Registration</span></h4>
+                    <p>Join the biggest real estate community</p>
+                    
+                    <!-- Display form errors -->
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Please correct the errors below:</strong>
+                        <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                
+                    <div class="row w-100 wow animate__animated animate__fadeIn">
+                        <!-- Name -->
+                        <div class="col-md-6 form-field">
+                            <div class="mb-3">
+                                <label for="full_name" class="form-label">Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control {% if form.full_name.errors %}is-invalid{% endif %}" 
+                                       id="full_name" name="full_name" placeholder="Name" 
+                                       value="{{ form.full_name.value|default:'' }}" required>
+                                {% if form.full_name.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.full_name.errors.0 }}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please enter your name.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                
+                        <!-- Company -->
+                        <div class="col-md-6 form-field">
+                            <div class="mb-3">
+                                <label for="company" class="form-label">Name of Firm or Company <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control {% if form.company.errors %}is-invalid{% endif %}" 
+                                       id="company" name="company" placeholder="Company/Firm Name" 
+                                       value="{{ form.company.value|default:'' }}" required>
+                                {% if form.company.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.company.errors.0 }}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please enter your company or firm name.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                
+                        <!-- Email -->
+                        <div class="col-md-6 form-field">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                       id="email" name="email" placeholder="Agent Email" 
+                                       value="{{ form.email.value|default:'' }}" required>
+                                {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.email.errors.0 }}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please enter a valid email address.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                
+                        <!-- Mobile -->
+                        <div class="col-md-6 form-field">
+                            <div class="mb-3">
+                                <label for="mobile" class="form-label">Mobile <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control {% if form.mobile.errors %}is-invalid{% endif %}" 
+                                       id="mobile" name="mobile" placeholder="Mobile No." 
+                                       value="{{ form.mobile.value|default:'' }}" pattern="^\d{10}$" required>
+                                {% if form.mobile.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.mobile.errors.0 }}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please enter a valid 10-digit mobile number.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                
+                        <!-- Password -->
+                        <div class="col-md-6 form-field">
+                            <div class="mb-3 position-relative">
+                                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <div class="d-flex w-100 justify-content-between align-items-start">
+                                    <div class="w-100">
+                                        <input type="password" class="form-control password-group {% if form.password1.errors %}is-invalid{% endif %}" 
+                                               id="password" name="password1" placeholder="Enter Password" required minlength="8">
+                                        {% if form.password1.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ form.password1.errors.0 }}
+                                        </div>
+                                        {% else %}
+                                        <div class="invalid-feedback">Password must be at least 8 characters.</div>
+                                        {% endif %}
+                                    </div>
+                                    <button class="btn bg-transparent password-group-btn toggle-password" id="eye-btn" type="button" data-target="password">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Password Confirmation -->
+                        <div class="col-md-6 form-field">
+                            <div class="mb-3 position-relative">
+                                <label for="password2" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                <div class="d-flex w-100 justify-content-between align-items-start">
+                                    <div class="w-100">
+                                        <input type="password" class="form-control password-group {% if form.password2.errors %}is-invalid{% endif %}" 
+                                               id="password2" name="password2" placeholder="Confirm Password" required minlength="8">
+                                        {% if form.password2.errors %}
+                                        <div class="invalid-feedback">
+                                            {{ form.password2.errors.0 }}
+                                        </div>
+                                        {% else %}
+                                        <div class="invalid-feedback">Please confirm your password.</div>
+                                        {% endif %}
+                                    </div>
+                                    <button class="btn bg-transparent password-group-btn toggle-password" id="eye-btn2" type="button" data-target="password2">
+                                        <i class="bi bi-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                
+                        <!-- Residence -->
+                        <div class="col-md-12 form-field">
+                            <div class="mb-3">
+                                <label for="residence" class="form-label">Residence Colony <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control {% if form.residence_colony.errors %}is-invalid{% endif %}" 
+                                       id="residence" name="residence_colony" placeholder="Residence Colony" 
+                                       value="{{ form.residence_colony.value|default:'' }}" required>
+                                {% if form.residence_colony.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.residence_colony.errors.0 }}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please enter your residence colony.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                
+                        <!-- Address -->
+                        <div class="col-md-12 form-field">
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Office Address <span class="text-danger">*</span></label>
+                                <textarea class="form-control {% if form.office_address.errors %}is-invalid{% endif %}" 
+                                          id="address" name="office_address" placeholder="Enter Address" 
+                                          required>{{ form.office_address.value|default:'' }}</textarea>
+                                {% if form.office_address.errors %}
+                                <div class="invalid-feedback">
+                                    {{ form.office_address.errors.0 }}
+                                </div>
+                                {% else %}
+                                <div class="invalid-feedback">Please enter your office address.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="d-flex justify-content-start gap-3 align-items-center btn-row">
+                        <button type="submit" class="dark-btn">Pay ₹1000/year</button>
+                        <a href="{% url 'login' %}" class="red-link text-decoration-underline">Already User? Login Here</a>
+                    </div>
+                    <p class="mt-3 small text-muted">Note: This amount is not refundable.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- Jquery JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/password.js' %}"></script>
+    <script src="{% static 'js/errorMessage.js' %}"></script>
+    <script>
+        // Password toggle functionality
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const target = this.getAttribute('data-target');
+                const input = document.getElementById(target);
+                const icon = this.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                }
+            });
+        });
+        
+        // Form validation
+        document.getElementById('broker-form').addEventListener('submit', function(event) {
+            if (!this.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            this.classList.add('was-validated');
+        });
+    </script>
+</body>
+</html>
