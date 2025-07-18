@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Terms & Conditions | Broker.Page</title>
+
+    <!-- BootStrap Links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Animate JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+</head>
+
+<body>
+    <div class="container-fluid px-0">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary wow animate__animated animate__fadeIn">
+            <div class="container">
+                <a class="navbar-brand" href="#"><img src="{% static 'images/logo.svg' %}" alt="Broker.Page Logo"></a>
+                <a href="{% url 'login' %}" class="login-mob-btn"><img src="{% static 'images/login.svg' %}"
+                        alt="Login"> Login</a>
+                <div class="collapse navbar-collapse me-auto" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="border-btn me-3" aria-current="page" href="{% url 'login' %}">Broker's Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="dark-btn" aria-current="page" href="{% url 'agent_registration' %}">Broker
+                                Registration</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-4">
+            <h4>Terms and Conditions</h4>
+            <p>Welcome to Broker.Page. These Terms and Conditions ("Terms") govern your access to and use of our
+                website,
+                services, and payment processing. By using our platform, you agree to comply with these Terms. If you do
+                not
+                agree, please do not use our services.</p>
+
+            <h5>1. Definitions</h5>
+            <ul>
+                <li><strong>“Broker.Page”</strong> (“we,” “our,” or “us”) – The online platform facilitating verified
+                    brokers.
+                </li>
+                <li><strong>“User”</strong> (“you,” “your”) – Any person using the platform, including brokers and
+                    consumers.
+                </li>
+                <li><strong>“Services”</strong> – The features offered by Broker.Page, including broker verification,
+                    registration, and access to real estate professionals.</li>
+                <li><strong>“Payment Gateway”</strong> – Razorpay, our third-party service provider for processing
+                    online
+                    payments securely.</li>
+            </ul>
+
+            <h5>2. Eligibility & Account Registration</h5>
+            <ul>
+                <li>You must be at least 18 years old and legally capable of entering into contracts.</li>
+                <li>Brokers must provide accurate and verifiable details for approval.</li>
+                <li>All information provided must be true, complete, and up to date.</li>
+            </ul>
+
+            <h5>3. Payment Terms & Fees</h5>
+
+            <ul>
+                <li>
+                    <p class="m-0 mb-1">3.1 Registration & Annual Fee</p>
+                    <ul>
+                        <li>The annual fee for broker registration and verification is ₹1,000.</li>
+                        <li>This fee covers one year of access to Broker.Page’s services.</li>
+                        <li>Users must renew their registration annually.</li>
+                        <li>The membership fee can be changed at any time without prior consent.</li>
+                    </ul>
+                </li>
+                <li>
+                    <p class="m-0 mb-1">3.2 Payment Processing</p>
+                    <ul>
+                        <li>Payments are securely processed via Razorpay (PCI-DSS compliant).</li>
+                        <li>Broker.Page does not store payment details like card numbers or UPI PINs.</li>
+                        <li>Electronic receipts are provided upon successful payment.</li>
+                    </ul>
+                </li>
+                <li>
+                    <p class="m-0 mb-1">3.3 Non-Refundable Fees</p>
+                    <ul>
+                        <li>All payments are non-refundable.</li>
+                        <li>Payment does not guarantee verification or approval.</li>
+                        <li>Refunds are only possible under limited exceptions outlined in our Refund Policy.</li>
+                    </ul>
+                </li>
+                <li>
+                    <p class="m-0 mb-1">3.4 Chargebacks & Payment Disputes</p>
+                    <ul>
+                        <li>Initiating a chargeback without contacting support may result in suspension.</li>
+                        <li><p>Disputes must be emailed to <a style="display: inline;" href="mailto:info@broker.page">info@broker.page</a></>
+                            before contacting your bank.</p></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h5>4. Broker Verification</h5>
+            <ul>
+                <li>Verification is subject to eligibility and internal review.</li>
+                <li>False or misleading info may lead to rejection or removal without refund.</li>
+                <li>No guarantees for leads, conversions, or business success.</li>
+            </ul>
+
+            <h5>5. User Conduct</h5>
+            <ul>
+                <li>Use only for legal and legitimate purposes.</li>
+                <li>Do not engage in fraud or misrepresentation.</li>
+                <li>Do not attempt unauthorized access to systems.</li>
+                <li>Comply with all applicable laws and regulations.</li>
+                <li>Violations may lead to suspension, termination, or legal action.</li>
+            </ul>
+
+            <h5>6. Intellectual Property Rights</h5>
+            <ul>
+                <li>All content belongs to Broker.Page or its licensors.</li>
+                <li>Do not reproduce, modify, or distribute without written consent.</li>
+                <li>Photos/videos of broker offices and brokers may be used for verification and profile display.</li>
+            </ul>
+
+            <h5>7. Limitation of Liability</h5>
+            <ul>
+                <li>Broker.Page is not a real estate service provider.</li>
+                <li>We are not liable for disputes, losses, or misrepresentations between users.</li>
+                <li>No liability for financial losses due to verification errors.</li>
+                <li>No liability for indirect or consequential damages.</li>
+            </ul>
+
+            <h5>8. Data Protection & Privacy</h5>
+            <ul>
+                <li>Your data is handled as per our <a style="width: fit-content; display: inline;" href="#">Privacy Policy</a>.</li>
+                <li>By using Broker.Page, you consent to data usage for service delivery and payments.</li>
+            </ul>
+
+            <h5>9. Service Modifications & Termination</h5>
+            <ul>
+                <li>We may modify, suspend, or discontinue services at any time.</li>
+                <li>Accounts may be terminated for violations or fraudulent activity.</li>
+            </ul>
+
+            <h5>10. Governing Law & Dispute Resolution</h5>
+            <ul>
+                <li>These Terms are governed by Indian law.</li>
+                <li>Disputes will be resolved via negotiation; courts in Delhi have jurisdiction.</li>
+            </ul>
+
+            <h5>11. Updates to These Terms</h5>
+            <ul>
+                <li>Terms may be updated anytime. Continued use indicates acceptance of changes.</li>
+            </ul>
+        </div>
+        {% include 'frontend/includes/footer.html' %}
+    </div>
+</body>
+
+</html>

@@ -11,6 +11,8 @@ urlpatterns = [
     path('users/', admin_views.admin_users, name='admin_users'),
     path('user/<int:broker_id>/', admin_views.admin_view_details, name='admin_view_details'),
     path('user/<int:broker_id>/toggle_verification/', admin_views.admin_toggle_verification, name='admin_toggle_verification'),
+    path('user/<int:broker_id>/download-invoice/', admin_views.admin_download_invoice, name='admin_download_invoice'),
+    path('users/export/', admin_views.admin_export_users, name='admin_export_users'),
     
     # Colony management URLs
     path('colonies/', admin_views.admin_colonies, name='admin_colonies'),

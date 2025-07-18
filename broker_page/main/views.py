@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.db.models import Q
 from .forms import BrokerRegistrationForm
-from .models import Broker, Colony
+from .models import Broker, Colony, Invoice
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -13,6 +13,9 @@ import os
 import tempfile
 import shutil
 import re
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+import datetime
 
 def home(request):
     colonies = list(Colony.objects.all().order_by('name'))
@@ -116,9 +119,8 @@ def login_view(request):
             if next_url:
                 return redirect(next_url)
             else:
-                # Default redirect to dashboard using new slug format
-                slug = generate_profile_slug(user.full_name, user.mobile)
-                return redirect('dashboard', slug=slug)
+                # Default redirect to dashboard using mobile number
+                return redirect('dashboard', mobile=user.mobile)
         else:
             return render(request, 'frontend/login.html', {
                 'email': email,
@@ -127,7 +129,7 @@ def login_view(request):
     return render(request, 'frontend/login.html')
 
 def about(request):
-    return render(request, 'frontend/about.html')
+    return render(request, 'frontend/about-us.html')
 
 def search_brokers(request):
     query = request.GET.get('q', '')
@@ -473,8 +475,8 @@ def get_broker_by_slug(slug):
         return Broker.objects.filter(mobile=mobile).first()
     return None
 
-def broker_profile(request, slug):
-    broker = get_broker_by_slug(slug)
+def broker_profile(request, mobile):
+    broker = get_broker_by_mobile(mobile)
     if not broker:
         return render(request, 'frontend/404.html', status=404)
     
@@ -523,13 +525,10 @@ def broker_profile(request, slug):
     return render(request, 'frontend/broker-profile.html', context)
 
 @login_required(login_url='/login/')
-def dashboard(request, slug):
-    # Parse the slug to get mobile number for security check
-    mobile = parse_profile_slug(slug)
-    if not mobile or request.user.mobile != mobile:
+def dashboard(request, mobile):
+    if request.user.mobile != mobile:
         messages.error(request, 'You do not have permission to access this dashboard.')
         return redirect('home')
-    
     broker = request.user
     print("DEBUG: Dashboard - User:", broker.email)
     print("DEBUG: Dashboard - Profile photo field:", broker.profile_photo)
@@ -605,89 +604,84 @@ def dashboard(request, slug):
 
 @login_required(login_url='/login/')
 def edit_profile(request):
-    print("DEBUG: edit_profile view called. User:", request.user, "Authenticated:", request.user.is_authenticated)
-    print("DEBUG: Request method:", request.method)
-    print("DEBUG: Request FILES:", request.FILES)
-    print("DEBUG: Request POST:", request.POST)
-    
     broker = request.user
+    all_colonies = list(Colony.objects.all().order_by('name'))
+    selected_colonies = []
+    if broker.active_colonies and broker.active_colonies.strip():
+        selected_colonies = [c.strip() for c in broker.active_colonies.split(',') if c.strip()]
+
     if request.method == 'POST':
-        print("DEBUG: POST request received")
-        print("DEBUG: FILES in request:", request.FILES)
-        print("DEBUG: profile_photo in FILES:", 'profile_photo' in request.FILES)
-        
-        if 'profile_photo' in request.FILES:
-            profile_photo = request.FILES['profile_photo']
-            print("DEBUG: Profile photo details:")
-            print("  - Name:", profile_photo.name)
-            print("  - Size:", profile_photo.size)
-            print("  - Content type:", profile_photo.content_type)
-            print("  - File object:", profile_photo)
-        
+        # Update broker fields from POST data
         broker.full_name = request.POST.get('full_name', broker.full_name)
-        broker.company = request.POST.get('company', broker.company)
-        broker.mobile = request.POST.get('mobile', broker.mobile)
-        broker.residence_colony = request.POST.get('residence_colony', broker.residence_colony)
-        broker.office_address = request.POST.get('office_address', broker.office_address)
-        broker.about = request.POST.get('about', broker.about)
         broker.age = request.POST.get('age', broker.age)
         broker.education = request.POST.get('education', broker.education)
-        broker.expertise = request.POST.get('expertise', broker.expertise)
+        broker.residence_colony = request.POST.get('residence_colony', broker.residence_colony)
+        broker.about = request.POST.get('about', broker.about)
+        broker.email = request.POST.get('email', broker.email)
+        broker.mobile = request.POST.get('mobile', broker.mobile)
         broker.whatsapp = request.POST.get('whatsapp', broker.whatsapp)
+        broker.company = request.POST.get('company', broker.company)
+        broker.office_address = request.POST.get('office_address', broker.office_address)
         broker.google_maps_url = request.POST.get('google_maps_url', broker.google_maps_url)
-        broker.achievements = request.POST.get('achievements', broker.achievements)
-        broker.listings = request.POST.get('listings', broker.listings)
+        broker.expertise = request.POST.get('expertise', broker.expertise)
         broker.min_deal_size = request.POST.get('min_deal_size', broker.min_deal_size)
         broker.max_deal_size = request.POST.get('max_deal_size', broker.max_deal_size)
+        broker.achievements = request.POST.get('achievements', broker.achievements)
+        # Handle multiple listings
+        listings = request.POST.getlist('listings')
+        broker.listings = '\n'.join([l.strip() for l in listings if l.strip()])
         broker.facebook_url = request.POST.get('facebook_url', broker.facebook_url)
         broker.linkedin_url = request.POST.get('linkedin_url', broker.linkedin_url)
         broker.instagram_url = request.POST.get('instagram_url', broker.instagram_url)
         broker.twitter_url = request.POST.get('twitter_url', broker.twitter_url)
         broker.youtube_url = request.POST.get('youtube_url', broker.youtube_url)
         broker.website = request.POST.get('website', broker.website)
-        
-        # Save active colonies as comma-separated string
+        # Colonies (multi-select)
         colonies = request.POST.getlist('colonies')
-        broker.active_colonies = ','.join([c.strip() for c in colonies if c.strip()])
-        
-        if request.FILES.get('profile_photo'):
-            print("DEBUG: Processing profile_photo upload")
+        broker.active_colonies = ', '.join(colonies)
+        # Handle file uploads
+        if 'profile_photo' in request.FILES:
             broker.profile_photo = request.FILES['profile_photo']
-            print("DEBUG: Profile photo assigned:", broker.profile_photo)
-            print("DEBUG: Profile photo name:", broker.profile_photo.name)
-        if request.FILES.get('profile_video'):
-            print("DEBUG: Processing profile_video upload")
+        if 'profile_video' in request.FILES:
             broker.profile_video = request.FILES['profile_video']
-            print("DEBUG: Profile video assigned:", broker.profile_video)
-        
-        try:
-            print("DEBUG: About to save broker...")
-            broker.save()
-            print("DEBUG: Broker saved successfully")
-            print("DEBUG: Profile photo URL after save:", broker.profile_photo.url if broker.profile_photo else "No photo")
-            print("DEBUG: Profile photo path after save:", broker.profile_photo.path if broker.profile_photo else "No photo")
-            messages.success(request, 'Profile updated successfully!')
-            
-            # Get the active tab from form submission and redirect with it
-            active_tab = request.POST.get('active_tab', '1')
-            return redirect(f'{reverse("edit_profile")}?tab={active_tab}')
-        except Exception as e:
-            print("DEBUG: Error saving broker:", str(e))
-            import traceback
-            traceback.print_exc()
-            messages.error(request, f'Error updating profile: {str(e)}')
-            # On error, also redirect with the active tab
-            active_tab = request.POST.get('active_tab', '1')
-            return redirect(f'{reverse("edit_profile")}?tab={active_tab}')
-    # For GET and after POST, fetch all colonies and selected colonies
-    all_colonies = list(Colony.objects.all().order_by('name'))
-    selected_colonies = []
-    if broker.active_colonies and broker.active_colonies.strip():
-        selected_colonies = [c.strip() for c in broker.active_colonies.split(',') if c.strip()]
+        if 'company_logo' in request.FILES:
+            broker.company_logo = request.FILES['company_logo']
+        if 'personal_document' in request.FILES:
+            broker.personal_document = request.FILES['personal_document']
+        if 'education_document' in request.FILES:
+            broker.education_document = request.FILES['education_document']
+        if 'company_document' in request.FILES:
+            broker.company_document = request.FILES['company_document']
+        broker.save()
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('edit_profile')
+
+    # Fetch invoices from the database
+    invoices = Invoice.objects.filter(broker=broker).order_by('-end_date')
+    # Next payment due is the end_date of the latest invoice, or None
+    next_payment_due = invoices.first().end_date if invoices.exists() else None
+
+    # Calculate can_renew: True if next_payment_due is within 30 days or overdue
+    import datetime
+    can_renew = False
+    if next_payment_due:
+        today = datetime.date.today()
+        days_until_due = (next_payment_due - today).days
+        can_renew = days_until_due <= 30
+
+    # Prepare listings_list for template
+    listings_list = []
+    if broker.listings and broker.listings.strip():
+        listings_list = [l.strip() for l in broker.listings.split('\n') if l.strip()]
+
     context = {
         'broker': broker,
         'all_colonies': all_colonies,
         'selected_colonies': selected_colonies,
+        'invoices': invoices,
+        'next_payment_due': next_payment_due,
+        'can_renew': can_renew,
+        'listings_list': listings_list,
     }
     return render(request, 'frontend/edit-profile.html', context)
 
@@ -748,3 +742,100 @@ def cleanup_abandoned_registration(request):
             del request.session['registration_data']
         if 'razorpay_order_id' in request.session:
             del request.session['razorpay_order_id']
+
+def contact_us(request):
+    return render(request, 'frontend/contact-us.html')
+
+def privacy_policy(request):
+    return render(request, 'frontend/privacy-policy.html')
+
+def terms_and_conditions(request):
+    return render(request, 'frontend/terms-and-conditions.html')
+
+def refund_policy(request):
+    return render(request, 'frontend/refund-policy.html')
+
+@login_required
+def download_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id, broker=request.user)
+    html = render_to_string('admin/invoice.html', {'broker': invoice.broker, 'invoice': invoice})
+    try:
+        from weasyprint import HTML
+        pdf = HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="invoice_{invoice.invoice_number}.pdf"'
+        return response
+    except ImportError:
+        return HttpResponse(html)
+
+@login_required(login_url='/login/')
+def renew_plan(request):
+    broker = request.user
+    amount = 100000  # ₹1000 in paise
+    order_data = {
+        'amount': amount,
+        'currency': 'INR',
+        'receipt': f'renewal_{broker.email}_{broker.id}',
+        'payment_capture': '1'
+    }
+    order = razorpay_client.order.create(order_data)
+    request.session['renewal_order_id'] = order['id']
+    request.session['renewal_amount'] = amount
+    return render(request, 'frontend/payment.html', {
+        'razorpay_key_id': settings.RAZORPAY_KEY_ID,
+        'order_id': order['id'],
+        'amount': amount,
+        'currency': 'INR',
+        'user_data': {'email': broker.email, 'full_name': broker.full_name}
+    })
+
+@login_required(login_url='/login/')
+def payment_handler_renewal(request):
+    if request.method == 'POST':
+        razorpay_payment_id = request.POST.get('razorpay_payment_id')
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        razorpay_signature = request.POST.get('razorpay_signature')
+        broker = request.user
+        if not all([razorpay_payment_id, razorpay_order_id, razorpay_signature]):
+            messages.error(request, 'Payment data is incomplete. Please try again.')
+            return redirect('payment_failed')
+        params_dict = {
+            'razorpay_order_id': razorpay_order_id,
+            'razorpay_payment_id': razorpay_payment_id,
+            'razorpay_signature': razorpay_signature
+        }
+        try:
+            razorpay_client.utility.verify_payment_signature(params_dict)
+            # Create new invoice for renewal
+            from datetime import timedelta
+            last_invoice = Invoice.objects.filter(broker=broker).order_by('-end_date').first()
+            start_date = last_invoice.end_date if last_invoice else broker.date_joined.date()
+            end_date = start_date + timedelta(days=365)
+            invoice_number = f"INV-{broker.id}-{end_date.strftime('%Y%m%d')}"
+            amount = request.session.get('renewal_amount', 100000) / 100.0
+            invoice = Invoice.objects.create(
+                broker=broker,
+                start_date=start_date,
+                end_date=end_date,
+                amount=amount,
+                invoice_number=invoice_number
+            )
+            # Update broker's plan_end_date
+            broker.plan_end_date = end_date
+            broker.save()
+            # Optionally, store payment IDs
+            broker.razorpay_payment_id = razorpay_payment_id
+            broker.razorpay_order_id = razorpay_order_id
+            broker.razorpay_signature = razorpay_signature
+            broker.save()
+            # Clean up session
+            if 'renewal_order_id' in request.session:
+                del request.session['renewal_order_id']
+            if 'renewal_amount' in request.session:
+                del request.session['renewal_amount']
+            messages.success(request, 'Renewal successful!')
+            return redirect('edit_profile')
+        except Exception as e:
+            messages.error(request, 'Payment verification failed. Please try again.')
+            return redirect('payment_failed')
+    return redirect('home')

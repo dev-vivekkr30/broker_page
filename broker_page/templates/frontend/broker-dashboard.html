@@ -36,6 +36,8 @@
             <a href="{{ broker.instagram_url }}" target="_blank"><img src="{% static 'images/instagram-c.svg' %}" alt=""></a>
             <a href="{{ broker.linkedin_url }}" target="_blank"><img src="{% static 'images/linkedin-c.svg' %}" alt=""></a>
             <a href="{{ broker.youtube_url }}" target="_blank"><img src="{% static 'images/youtube-c.svg' %}" alt=""></a>
+            {% if broker.google_maps_url %}<a href="{{ broker.google_maps_url }}" target="_blank"><img src="{% static 'images/map.svg' %}" alt=""></a>{% endif %}
+            <a href="mailto:{{ broker.email }}" target="_blank"><img src="{% static 'images/mail.svg' %}" alt=""></a>
         </div>
     </div>
 
@@ -66,52 +68,22 @@
                         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body pt-0">
+                        <!-- Only show Broker's Listings / Mandates in offcanvas for mobile/tab -->
+                        {% if listings_list %}
                         <div class="trans-bg">
                             <div class="user-name">
                                 <div class="label">
-                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
-                                    <span>Address</span>
+                                    <i class="bi bi-list-ul"></i>
+                                    <span>Broker's Listings / Mandates</span>
                                 </div>
-                                <p class="m-0 mt-1 small">{{ broker.office_address }}</p>
-                                <a href="#" class="text-primary small"><u>View Google Map location</u></a>
-                            </div>
-                        </div>
-                        <div class="trans-bg">
-                            <div class="user-name">
-                                <div class="label">
-                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
-                                    <span>Office Number</span>
+                                <div class="m-0 mt-2 tags-list">
+                                    {% for listing in listings_list %}
+                                        {% if listing %}<span class="tag">{{ listing }}</span>{% endif %}
+                                    {% endfor %}
                                 </div>
-                                <a href="tel:{{ broker.mobile }}" class="m-0 mt-1 small">{{ broker.mobile }}</a>
                             </div>
                         </div>
-                        <div class="trans-bg">
-                            <div class="user-name">
-                                <div class="label">
-                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
-                                    <span>Email</span>
-                                </div>
-                                <a href="mailto:{{ broker.email }}" class="m-0 mt-1 small">{{ broker.email }}</a>
-                            </div>
-                        </div>
-                        <div class="trans-bg">
-                            <div class="user-name">
-                                <div class="label">
-                                    <img src="{% static 'images/company-icon.svg' %}" alt="">
-                                    <span>Broker's Website</span>
-                                </div>
-                                <a href="#" class="m-0 mt-1 small">BrokerWebsite.com</a>
-                            </div>
-                        </div>
-                        <div class="trans-bg border-0">
-                            <div class="social-icons d-flex justify-content-start align-items-center gap-1">
-                                <a href="#" id="shareProfileBtn"><img src="{% static 'images/share.svg' %}" alt=""></a>
-                                <a href="{{ broker.facebook_url }}" target="_blank"><img src="{% static 'images/facebook-c.svg' %}" alt=""></a>
-                                <a href="{{ broker.instagram_url }}" target="_blank"><img src="{% static 'images/instagram-c.svg' %}" alt=""></a>
-                                <a href="{{ broker.linkedin_url }}" target="_blank"><img src="{% static 'images/linkedin-c.svg' %}" alt=""></a>
-                                <a href="{{ broker.youtube_url }}" target="_blank"><img src="{% static 'images/youtube-c.svg' %}" alt=""></a>
-                            </div>
-                        </div>
+                        {% endif %}
                     </div>
                     <div class="offcanvas-footer p-4">
                         <a href="{% url 'logout' %}" class="red-link"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
@@ -205,6 +177,8 @@
                                 {% if broker.instagram_url %}<a href="{% if broker.instagram_url|slice:':4' == 'http' %}{{ broker.instagram_url }}{% else %}https://{{ broker.instagram_url }}{% endif %}" target="_blank"><img src="{% static 'images/instagram-c.svg' %}" alt=""></a>{% endif %}
                                 {% if broker.linkedin_url %}<a href="{% if broker.linkedin_url|slice:':4' == 'http' %}{{ broker.linkedin_url }}{% else %}https://{{ broker.linkedin_url }}{% endif %}" target="_blank"><img src="{% static 'images/linkedin-c.svg' %}" alt=""></a>{% endif %}
                                 {% if broker.youtube_url %}<a href="{% if broker.youtube_url|slice:':4' == 'http' %}{{ broker.youtube_url }}{% else %}https://{{ broker.youtube_url }}{% endif %}" target="_blank"><img src="{% static 'images/youtube-c.svg' %}" alt=""></a>{% endif %}
+                                {% if broker.google_maps_url %}<a href="{{ broker.google_maps_url }}" target="_blank"><img src="{% static 'images/map.svg' %}" alt=""></a>{% endif %}
+                                <a href="mailto:{{ broker.email }}" target="_blank"><img src="{% static 'images/mail.svg' %}" alt=""></a>
                             </div>
                         </div>
                     </div>
@@ -264,14 +238,32 @@
                             {% if verification_status.name %}<img class="verifed-icon" src="{% static 'images/tick.svg' %}" alt="">{% else %}<img class="verifed-icon" src="{% static 'images/not_verified.svg' %}" alt="">{% endif %}
                         </div>
                         {% if broker.company %}
-                        <div class="blue-bg wow animate__ animate__fadeIn">
-                            <div class="user-name">
+                        <!-- <div class="blue-bg wow animate__ animate__fadeIn">
+                            <div class="user-name d-flex align-items-center gap-2">
                                 <div class="label">
                                     <i class="bi bi-building-fill"></i>
                                     <span>Company Name</span>
                                 </div>
-                                <p class="m-0 mt-1">{{ broker.company }}</p>
+                                {% if broker.company_logo %}
+                                    <img src="{{ broker.company_logo.url }}" alt="Company Logo" style="max-height: 32px; border-radius: 4px; margin-left: 8px; background: #f8f8f8; padding: 2px;" />
+                                {% endif %}
                             </div>
+                            <p class="m-0 mt-1">{{ broker.company }}</p>
+                        </div> -->
+                        <div class="blue-bg wow animate__ animate__fadeIn">
+                            <div class="d-flex justify-content-start gap-2">
+                                {% if broker.company_logo %}
+                                    <img src="{{ broker.company_logo.url }}" alt="Company Logo" style="max-height: 42px; height: 42px; object-fit: cover;" />
+                                {% endif %}
+                                <div class="user-name d-flex flex-column align-items-start gap-1">
+                                    <div class="label">
+                                        <i class="bi bi-building-fill"></i>
+                                        <span>Company Name</span>
+                                    </div>
+                                    <p class="m-0 mt-1">{{ broker.company }}</p>
+                                </div>
+                            </div>
+                            
                             {% if verification_status.company %}<img class="verifed-icon" src="{% static 'images/tick.svg' %}" alt="">{% else %}<img class="verifed-icon" src="{% static 'images/not_verified.svg' %}" alt="">{% endif %}
                         </div>
                         {% endif %}
@@ -366,8 +358,10 @@
                         </div>
                     </div>
                     {% endif %}
-                    {% if broker.listings or listings_list %}
-                    <div class="col-md-6">
+                    <!-- Hide Broker's Listings / Mandates on desktop, show only on mobile/tab in offcanvas -->
+                    {% comment %}
+                    {% if listings_list %}
+                    <div class="col-md-6 d-md-none">
                         <div class="gray-bg wow animate__ animate__fadeIn">
                             <div class="user-name">
                                 <div class="label">
@@ -383,6 +377,7 @@
                         </div>
                     </div>
                     {% endif %}
+                    {% endcomment %}
                 </div>
                 <div class="row">
                     {% if broker.min_deal_size or broker.max_deal_size %}

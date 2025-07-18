@@ -1,8 +1,334 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-<head><title>Admin Users</title></head>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users | Broker.Page Admin</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+    <link rel="stylesheet" href="{% static 'css/admin/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin/dashboard.css' %}">
+</head>
+
 <body>
-    <h1>Admin Users Page (Placeholder)</h1>
-    <a href="{% url 'custom_admin:admin_dashboard' %}">Back to Dashboard</a>
+    <div class="container-fluid p-0">
+        <div class="d-flex justify-content-start">
+            {% include 'admin/includes/sidebar.html' %}
+            <div class="w-100">
+                <div class="topBar">
+                    <div class="topbarLeft">
+                        <h6 class="m-0 fw-bold">Welcome, {{ admin_user.full_name|default:"Admin" }}</h6>
+                        <p class="m-0 small">Today is {{ current_date }}.</p>
+                    </div>
+                    <div class="topbarRight">
+                        <div class="dropdown">
+                            <div class="d-flex align-items-center justify-content-center" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="d-flex align-items-center justify-content-start">
+                                    <i class="bi bi-person-circle me-2" style="font-size: 32px; line-height: 0;"></i>
+                                    <div>
+                                        <p class="m-0 fw-bold" style="line-height: normal;">{{ admin_user.full_name|default:"Admin" }}</p>
+                                        <p class="m-0 small" style="line-height: normal;">Administrator</p>
+                                    </div>
+                                </div>
+                                <i class="bi bi-chevron-down ms-3"></i>
+                            </div>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'custom_admin:admin_logout' %}"><i
+                                            class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="dataOverviewSection mt-3">
+                    <div class="section-title">
+                        <h6 class="fw-bold m-0">All Users <span class="fw-normal text-muted">({{ total_users }})</span></h6>
+                        <a class="secondary-btn me-2 addBtn" href="{% url 'custom_admin:admin_export_users' %}"><i class="bi bi-cloud-arrow-down me-2"></i> Export</a>
+                    </div>
+                    <div class="dataOverview mt-3">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pills-home" type="button" role="tab"
+                                            aria-controls="pills-home" aria-selected="true">All User <span>({{ total_users }})</span></button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="pills-expired-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pills-expired" type="button" role="tab"
+                                            aria-controls="pills-expired" aria-selected="false">Expired <span>({{ expired_users }})</span></button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="pills-upcoming-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pills-upcoming" type="button" role="tab"
+                                            aria-controls="pills-upcoming" aria-selected="false">Upcoming <span>({{ upcoming_users }})</span></button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="d-flex justify-content-start align-items-center">
+                                <form method="get" id="dateFilterForm">
+                                    <input type="date" name="date" id="dateFilter" placeholder="Filter by date"
+                                        class="form-control" value="{{ current_date }}" onchange="document.getElementById('dateFilterForm').submit();">
+                                </form>
+                            </div>
+                        </div>
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                                aria-labelledby="pills-home-tab" tabindex="0">
+                                <div class="table-responsive">
+                                    <table class="table" id="projectsTable">
+                                        <thead>
+                                            <tr>
+                                                <th style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;"
+                                                    scope="col">S/N</th>
+                                                <th scope="col">Broker Name</th>
+                                                <th scope="col">Mobile Number</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Firm Name</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Registration Date</th>
+                                                <th style="border-top-right-radius: 6px; border-bottom-right-radius: 6px;"
+                                                    scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for broker in brokers %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ broker.full_name }}</td>
+                                                <td>{{ broker.mobile }}</td>
+                                                <td>{{ broker.email }}</td>
+                                                <td>{{ broker.company }}</td>
+                                                <td>
+                                                    {% if broker.is_fully_verified %}
+                                                        <span class="badge badge-active">Verified</span>
+                                                    {% elif broker.is_paid %}
+                                                        <span class="badge badge-upcoming">Paid</span>
+                                                    {% else %}
+                                                        <span class="badge badge-pending">Pending{% if broker.pending_verifications is not None %} ({{ broker.pending_verifications }}){% endif %}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ broker.date_joined|date:'Y-m-d' }}</td>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <i class="bi bi-three-dots-vertical" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item small" href="{% url 'custom_admin:admin_view_details' broker.id %}">View Details</a>
+                                                            </li>
+                                                            {% if broker.is_paid %}
+                                                            <li><a class="dropdown-item small" href="{% url 'custom_admin:admin_download_invoice' broker.id %}">Download
+                                                                    Invoice</a></li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="7" class="text-center">No users found</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pills-expired" role="tabpanel"
+                                aria-labelledby="pills-expired-tab" tabindex="0">
+                                <div class="table-responsive">
+                                    <table class="table" id="expiredTable">
+                                        <thead>
+                                            <tr>
+                                                <th style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;"
+                                                    scope="col">S/N</th>
+                                                <th scope="col">Broker Name</th>
+                                                <th scope="col">Mobile Number</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Firm Name</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Registration Date</th>
+                                                <th style="border-top-right-radius: 6px; border-bottom-right-radius: 6px;"
+                                                    scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for broker in expired_brokers %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ broker.full_name }}</td>
+                                                <td>{{ broker.mobile }}</td>
+                                                <td>{{ broker.email }}</td>
+                                                <td>{{ broker.company }}</td>
+                                                <td><span class="badge badge-expired">Expired</span></td>
+                                                <td>{{ broker.date_joined|date:'Y-m-d' }}</td>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <i class="bi bi-three-dots-vertical" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item small" href="{% url 'custom_admin:admin_view_details' broker.id %}">View Details</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="7" class="text-center">No expired users found</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="pills-upcoming" role="tabpanel"
+                                aria-labelledby="pills-upcoming-tab" tabindex="0">
+                                <div class="table-responsive">
+                                    <table class="table" id="upcomingTable">
+                                        <thead>
+                                            <tr>
+                                                <th style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;"
+                                                    scope="col">S/N</th>
+                                                <th scope="col">Broker Name</th>
+                                                <th scope="col">Mobile Number</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Firm Name</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Registration Date</th>
+                                                <th style="border-top-right-radius: 6px; border-bottom-right-radius: 6px;"
+                                                    scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for broker in upcoming_brokers %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ broker.full_name }}</td>
+                                                <td>{{ broker.mobile }}</td>
+                                                <td>{{ broker.email }}</td>
+                                                <td>{{ broker.company }}</td>
+                                                <td><span class="badge badge-upcoming">Upcoming</span></td>
+                                                <td>{{ broker.date_joined|date:'Y-m-d' }}</td>
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <i class="bi bi-three-dots-vertical" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                                        <ul class="dropdown-menu">
+                                                            <li><a class="dropdown-item small" href="{% url 'custom_admin:admin_view_details' broker.id %}">View Details</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="7" class="text-center">No upcoming users found</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer">
+                <p class="m-0">Copyright © 2023 All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- Add User Modal Start -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="changePasswordModalLabel">Change User Password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="passwordForm">
+                        <!-- Create New Password Field -->
+                        <label for="newPassword" class="form-label mb-1">Create New Password</label>
+                        <div class="input-group mb-2">
+                            <input type="password" class="form-control border-0" id="newPassword" required minlength="8">
+                            <button class="btn bg-transparent border-0" type="button" id="toggleNewPassword">
+                                <i class="bi bi-eye-slash" id="toggleNewIcon"></i>
+                            </button>
+                        </div>
+                        <small class="text-danger" id="newPasswordError" style="display: none;">Password must be at least 8 characters long.</small>
+                    
+                        <!-- Confirm Password Field -->
+                        <label for="confirmPassword" class="form-label mb-1">Confirm Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control border-0" id="confirmPassword" required>
+                            <button class="btn bg-transparent border-0" type="button" id="toggleConfirmPassword">
+                                <i class="bi bi-eye-slash" id="toggleConfirmIcon"></i>
+                            </button>
+                        </div>
+                        <div id="passwordHelpBlock" class="form-text xsmall mb-2">
+                            Your password must be 8-20 characters long</div>
+                        <small class="text-danger mb-2" id="confirmPasswordError" style="display: none;">Passwords do not match.</small>
+                        <button type="submit" class="primary-btn addBtn">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add User Modal End -->
+
+    <!-- delete modal start -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are your sure you want to delete?</p>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="secondary-btn me-2 addBtn" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="primary-btn addBtn">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- delete modal end -->
+
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"
+        integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- datatabel -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="JS/datatable.js"></script>
+
+    <!-- menu script -->
+    <script src="JS/sidebar.js"></script>
+    <script src="{% static 'js/admin/menu.js' %}"></script>
+    <script src="{% static 'js/admin/users.js' %}"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </body>
-</html> 
+
+</html>

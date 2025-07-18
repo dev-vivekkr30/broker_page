@@ -1,0 +1,55 @@
+.alert {
+    position: absolute;
+    right: 0;
+    width: 320px;
+    border-radius: 8px !important;
+    padding: 1rem 1rem;
+    margin: 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    z-index: 9999;
+    box-shadow: var(--shadow);
+}
+
+.alert-danger {
+    border: 2px solid #dc3545 !important;
+    background-color: #fbe2e4;
+    color: #601017;
+}
+.alert-success {
+    border: 2px solid #198754 !important;
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.alert-slide-in {
+    animation: slideInRight 0.5s ease forwards;
+}
+
+.alert-slide-out {
+    animation: slideOutRight 0.5s ease forwards;
+}

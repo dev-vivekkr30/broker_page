@@ -81,6 +81,12 @@ class Broker(AbstractUser):
     is_residence_colony_verified = models.BooleanField(default=False)
     is_office_address_verified = models.BooleanField(default=False)
     active_colonies = models.CharField(max_length=1024, blank=True, null=True)  # Comma-separated colonies/areas
+    plan_end_date = models.DateField(null=True, blank=True)
+    company_logo = models.ImageField(upload_to='company_logos/', null=True, blank=True)
+
+    personal_document = models.FileField(upload_to='documents/personal/', null=True, blank=True)
+    education_document = models.FileField(upload_to='documents/education/', null=True, blank=True)
+    company_document = models.FileField(upload_to='documents/company/', null=True, blank=True)
 
     @property
     def is_fully_verified(self):
@@ -96,3 +102,18 @@ class Broker(AbstractUser):
 
     def __str__(self):
         return self.full_name if self.full_name else self.email
+
+class Invoice(models.Model):
+    broker = models.ForeignKey(Broker, on_delete=models.CASCADE, related_name='invoices')
+    start_date = models.DateField()
+    end_date = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    invoice_number = models.CharField(max_length=50, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Invoice {self.invoice_number} for {self.broker.full_name}"
+
+    class Meta:
+        ordering = ['-start_date']

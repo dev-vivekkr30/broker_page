@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Privacy Policy | Broker.Page</title>
+
+    <!-- BootStrap Links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Animate JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+</head>
+
+<body>
+    <div class="container-fluid px-0">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary wow animate__animated animate__fadeIn">
+            <div class="container">
+                <a class="navbar-brand" href="#"><img src="{% static 'images/logo.svg' %}" alt="Broker.Page Logo"></a>
+                <a href="{% url 'login' %}" class="login-mob-btn"><img src="{% static 'images/login.svg' %}"
+                        alt="Login"> Login</a>
+                <div class="collapse navbar-collapse me-auto" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="border-btn me-3" aria-current="page" href="{% url 'login' %}">Broker's Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="dark-btn" aria-current="page" href="{% url 'agent_registration' %}">Broker
+                                Registration</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-4">
+            <h4>Privacy Policy</h4>
+            <p>
+                Broker.Page ("we," "our," or "us") is committed to protecting your privacy and ensuring transparency in
+                how we collect, use, and safeguard your personal information. This Privacy Policy explains how we handle
+                your data, especially concerning online payments made through Razorpay.
+            </p>
+
+            <h5>1. Information We Collect</h5>
+            <ul>
+                <li>
+                    <h6>1.1 Personal Information Provided by You</h6>
+                    <ul>
+                        <li>Full Name</li>
+                        <li>Mobile Number</li>
+                        <li>Email Address</li>
+                        <li>Location/Address</li>
+                        <li>PAN or GST details (if applicable)</li>
+                        <li>Payment details (processed securely via Razorpay)</li>
+                    </ul>
+                </li>
+                <li>
+                    <h6>1.2 Automatically Collected Information</h6>
+                    <ul>
+                        <li>IP Address</li>
+                        <li>Browser and Device Information</li>
+                        <li>Cookies and Tracking Data</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <p>We do not store your credit/debit card details. All transactions are processed securely via Razorpay,
+                which complies with PCI-DSS standards for secure payment handling.</p>
+
+            <h5>2. How We Use Your Information</h5>
+            <ul>
+                <li>To facilitate your broker verification and platform registration.</li>
+                <li>To process payments securely via Razorpay.</li>
+                <li>To send transactional emails, invoices, and updates regarding your account.</li>
+                <li>To prevent fraud, ensure compliance, and enhance platform security.</li>
+                <li>To improve user experience and personalize services.</li>
+                <li>Photos & videos of offices of brokers (outside & inside) are used for profile pages and internal
+                    verification.</li>
+                <li>Photos of brokers are also used on their respective pages and stored for verification purposes.</li>
+            </ul>
+
+            <h5>3. Payment Processing & Security</h5>
+            <ul>
+                <li>We use Razorpay as our payment gateway provider.</li>
+                <li>All transactions are encrypted using SSL (Secure Socket Layer) technology.</li>
+                <li>Broker.Page does not store sensitive payment information such as card numbers, CVVs, or UPI PINs.
+                </li>
+                <li>Razorpay may collect your payment method details per their privacy policy and terms of service.</li>
+                <li>For more details, refer to the official Razorpay <a style="display: inline;" href="https://razorpay.com/privacy/"
+                        target="_blank">Privacy Policy</a>.</li>
+            </ul>
+
+            <h5>4. Data Sharing & Third-Party Services</h5>
+            <ul>
+                <li>We do not sell or rent your personal information.</li>
+                <li>We may share data in the following cases:</li>
+                <ul>
+                    <li>With Razorpay – For secure payment processing.</li>
+                    <li>With Legal Authorities – When required by law, or for fraud prevention.</li>
+                    <li>With Service Providers – For operations, customer support, and analytics (under confidentiality
+                        agreements).</li>
+                </ul>
+            </ul>
+
+            <h5>5. Refund & Cancellation Policy</h5>
+            <ul>
+                <li>All fees paid on Broker.Page are non-refundable.</li>
+                <li>Payment does not guarantee verification, which is subject to internal approval.</li>
+                <li>In case of fraudulent transactions, contact us at <a style="display: inline;"
+                        href="mailto:info@broker.page">info@broker.page</a> within 48 hours for resolution.</li>
+            </ul>
+
+            <h5>6. Your Rights & Choices</h5>
+            <p>You have the right to:</p>
+            <ul>
+                <li>Access, update, or delete your personal information.</li>
+                <li>Withdraw consent for marketing communications.</li>
+                <li>Request a copy of the data we store about you.</li>
+            </ul>
+            <p>For any data-related requests, email us at <a  style="display: inline;" href="mailto:info@broker.page">info@broker.page</a>.</p>
+
+            <h5>7. Data Security</h5>
+            <ul>
+                <li>SSL encryption for all sensitive transactions.</li>
+                <li>Restricted access to personal data.</li>
+                <li>Regular security audits to prevent breaches.</li>
+            </ul>
+            <p>While we take strong measures to secure your data, no online transaction is 100% secure. Please take
+                necessary precautions when sharing sensitive information.</p>
+
+            <h5>8. Changes to this Privacy Policy</h5>
+            <p>We may update this Privacy Policy from time to time. Any changes will be posted on our website. Continued
+                use of our platform implies acceptance of the revised terms.</p>
+        </div>
+        {% include 'frontend/includes/footer.html' %}
+    </div>
+</body>
+
+</html>

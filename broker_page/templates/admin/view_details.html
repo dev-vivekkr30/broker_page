@@ -113,6 +113,36 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <th>Personal Details Document</th>
+                                            <td colspan="2">
+                                                {% if broker.personal_document %}
+                                                    <a href="{{ broker.personal_document.url }}" target="_blank">View Document</a>
+                                                {% else %}
+                                                    <span class="text-muted">No document uploaded</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Education Document</th>
+                                            <td colspan="2">
+                                                {% if broker.education_document %}
+                                                    <a href="{{ broker.education_document.url }}" target="_blank">View Document</a>
+                                                {% else %}
+                                                    <span class="text-muted">No document uploaded</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Company Document</th>
+                                            <td colspan="2">
+                                                {% if broker.company_document %}
+                                                    <a href="{{ broker.company_document.url }}" target="_blank">View Document</a>
+                                                {% else %}
+                                                    <span class="text-muted">No document uploaded</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th>Age</th>
                                             <td><input type="number" class="form-control w-100" name="age" placeholder="Enter Age" value="{{ broker.age }}" disabled></td>
                                             <td style="float: right !important;">

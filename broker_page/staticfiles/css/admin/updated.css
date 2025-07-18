@@ -1,0 +1,66 @@
+/* Please Update this CSS file 26-03-25 */
+.dropdown-btn {
+    border-radius: 4px;
+    height: 40px;
+    width: 100%;
+    text-align: left;
+    background-color: var(--white);
+    border: 1px solid var(--p50);
+    color: var(--p400);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+}
+
+.dropdown-btn:hover,
+.btn.show,
+.dropdown-btn:focus {
+    background-color: #ddd;
+    color: var(--p400);
+    border: 1px solid var(--p50);
+}
+
+.dropdown-item {
+    font-size: 14px;
+}
+
+.dateRangeMenu.show {
+    width: 100%;
+}
+
+.daterangepicker {
+    right: auto;
+    position: absolute;
+    left: 56% !important;
+    top: 37% !important;
+    z-index: 9999 !important;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2) !important;
+}
+
+.daterangepicker .drp-buttons .btn-primary {
+    background-color: var(--p400);
+    color: var(--white);
+    border: none;
+    font-weight: 400;
+    font-family: var(--main-font);
+}
+
+.info-card h2 {
+    font-size: 24px;
+}
+
+.info-card .small {
+    font-size: 12px;
+}
+
+.info-card {
+    padding: 10px !important;
+    height: 84px;
+    align-items: center !important;
+}
+
+.info-card img {
+    max-width: 30px;
+}

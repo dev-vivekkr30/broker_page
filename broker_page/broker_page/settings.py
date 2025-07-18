@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-!33@-6gar&$wd1f&%#3pec!hf4jj%bxk86+5a=eq3!tq=-dzbc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
+ALLOWED_HOSTS = ['broker.page', 'www.broker.page', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -129,9 +129,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # 👈 Your global static files
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For collectstatic, optional in dev
+
 # Media files (User uploaded files)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # <-- Change this for local dev
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

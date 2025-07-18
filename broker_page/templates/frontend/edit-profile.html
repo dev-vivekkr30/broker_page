@@ -149,6 +149,7 @@
 
             <!-- Content Area -->
             <div class="content">
+                <a href="{% url 'dashboard' mobile=broker.mobile %}" class=" text-primary text-muted small mb-3"><i class="bi bi-arrow-left-short"></i> Go Back</a>
                 <form id="multiStepForm" method="post" enctype="multipart/form-data" action="{% url 'edit_profile' %}">
                     {% csrf_token %}
                     <input type="hidden" id="activeTab" name="active_tab" value="1">
@@ -186,6 +187,30 @@
                                         <input type="file" class="form-control w-100" id="profile_video" name="profile_video" accept="video/*" style="height: 35px !important;">
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <!-- Document Uploads for Verification -->
+                        <div class="row mt-3">
+                            <div class="col-md-4 mb-3">
+                                <label for="personal_document" class="form-label">Personal Details Document</label>
+                                <input type="file" class="form-control" id="personal_document" name="personal_document" accept="application/pdf,image/*">
+                                {% if broker.personal_document %}
+                                    <a href="{{ broker.personal_document.url }}" target="_blank" class="small d-block mt-1">View Uploaded Document</a>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="education_document" class="form-label">Education Document</label>
+                                <input type="file" class="form-control" id="education_document" name="education_document" accept="application/pdf,image/*">
+                                {% if broker.education_document %}
+                                    <a href="{{ broker.education_document.url }}" target="_blank" class="small d-block mt-1">View Uploaded Document</a>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="company_document" class="form-label">Company Document</label>
+                                <input type="file" class="form-control" id="company_document" name="company_document" accept="application/pdf,image/*">
+                                {% if broker.company_document %}
+                                    <a href="{{ broker.company_document.url }}" target="_blank" class="small d-block mt-1">View Uploaded Document</a>
+                                {% endif %}
                             </div>
                         </div>
                         <div class="mb-3">
@@ -280,7 +305,15 @@
                             <button type="button" class="btn-sm btn-add"
                                 onclick="addField('achievements', 3)">+</button>
                         </div>
-                        
+                        <div class="mb-3">
+                            <label for="company_logo" class="form-label">Upload Company Logo</label>
+                            <div class="d-flex align-items-center gap-2">
+                                {% if broker.company_logo %}
+                                    <img src="{{ broker.company_logo.url }}" alt="Company Logo" style="max-height: 50px; border-radius: 4px; background: #f8f8f8; padding: 2px;" />
+                                {% endif %}
+                                <input type="file" class="form-control" id="company_logo" name="company_logo" accept="image/*" style="height: 35px; max-width: 250px;">
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Step 4: Social Media Details -->
@@ -321,7 +354,9 @@
                         </div>
                         <div class="mb-3 textarea-group ">
                             <label class="form-label">Listings / Mandates</label>
-                            <textarea class="textarea-control" name="listings" rows="2" maxlength="200" placeholder="Listing">{{ broker.listings }}</textarea>
+                            <div id="listingsContainer"></div>
+                            <button type="button" class="btn-sm btn-add" id="addListingBtn">+</button>
+                            <small class="text-muted">Max 15 listings. The first field cannot be deleted.</small>
                         </div>
                     </div>
                     <div class="d-flex justify-content-end gap-3 align-items-center btn-row mt-4">
@@ -337,38 +372,53 @@
                     <h4 class="mb-3 fw-semibold">Billing and Subscription</h4>
                     <p class="mb-2 border-bottom small text-muted">Subscription Details: </p>
                     <div class="d-flex align-items-center justify-content-between renew-details">
-                        <!-- <h5 class="red-link">Plan Name</h5> -->
-                        <span class="small text-muted"><i class="bi bi-clock me-2 text-muted"></i>Next Payment Due: 01
-                            April 2026</span>
-                            <button class="btn-sm dark-btn mt-2 small">Renew Plan</button>
+                        <span class="small text-muted"><i class="bi bi-clock me-2 text-muted"></i>
+                            Next Payment Due: {% if next_payment_due %}{{ next_payment_due|date:'d M Y' }}{% else %}N/A{% endif %}
+                        </span>
+                        {% if can_renew %}
+                            <a href="{% url 'renew_plan' %}" class="btn-sm dark-btn mt-2 small">Renew Plan</a>
+                        {% else %}
+                            <a href="#" class="btn-sm dark-btn mt-2 small disabled" aria-disabled="true" style="pointer-events:none;opacity:0.6;">Renew Plan</a>
+                        {% endif %}
                     </div>
-                    
                     <p class="mb-2 border-bottom small text-muted">Invoice & Transaction History: </p>
                     <div class="table-responsive mt-4">
                         <table class="table" id="projectsTable">
                             <thead>
                                 <tr>
-                                    <th style="border-top-left-radius: 6px; border-bottom-left-radius: 6px;"
-                                        scope="col">S/N</th>
-                                    <th scope="col">Start Date</th>
-                                    <th scope="col">End Date</th>
-                                    <th scope="col">Amount Paid</th>
-                                    <th scope="col">Invoice</th>
+                                    <th>S/N</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Amount Paid</th>
+                                    <th>Transaction ID</th>
+                                    <th>Payment ID</th>
+                                    <th>Invoice</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for invoice in invoices %}
                                 <tr>
-                                    <td>01</td>
-                                    <td>24-02-24</td>
-                                    <td>24-02-25</td>
-                                    <td>₹1000</td>
-                                    <td><a class="small text-decoration-underline text-primary"
-                                            href="invoice.html">View Invoice</a></td>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ invoice.start_date|date:'d-m-y' }}</td>
+                                    <td>{{ invoice.end_date|date:'d-m-y' }}</td>
+                                    <td>₹{{ invoice.amount }}</td>
+                                    <td>{{ invoice.transaction_id|default:'-' }}</td>
+                                    <td>{{ invoice.payment_id|default:'-' }}</td>
+                                    <td>
+                                        <a class="small text-decoration-underline text-primary"
+                                           href="{% url 'download_invoice' invoice.id %}" target="_blank">
+                                          View Invoice
+                                        </a>
+                                    </td>
                                 </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7">No invoices found.</td>
+                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -426,163 +476,75 @@
     <script src="{% static 'js/datatable.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
     <script>
-        // Auto-dismiss alerts after 5 seconds
-        document.addEventListener('DOMContentLoaded', function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                setTimeout(function() {
-                    if (alert && alert.parentNode) {
-                        const bsAlert = new bootstrap.Alert(alert);
-                        bsAlert.close();
-                    }
-                }, 5000);
-            });
-            
-            // Restore active tab from URL parameter or default to step 1
-            const urlParams = new URLSearchParams(window.location.search);
-            const activeTab = urlParams.get('tab') || '1';
-            activateTab(activeTab);
-        });
-        
-        // Function to activate a specific tab
-        function activateTab(stepNumber) {
-            // Remove active class from all buttons and steps
-            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
-            
-            // Add active class to the target button and step
-            const targetButton = document.querySelector(`[data-step="${stepNumber}"]`);
-            const targetStep = document.getElementById(`step-${stepNumber}`);
-            
-            if (targetButton && targetStep) {
-                targetButton.classList.add('active');
-                targetStep.classList.add('active');
+window.initialListings = "{{ listings_list|join:'||'|escapejs }}";
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        setTimeout(function() {
+            if (alert && alert.parentNode) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
             }
-        }
-        
-        // Update tab switching to store active tab
-        document.querySelectorAll('.toggle-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const stepNumber = this.getAttribute('data-step');
-                activateTab(stepNumber);
-                
-                // Update hidden input with current active tab
-                document.getElementById('activeTab').value = stepNumber;
-            });
-        });
-        
-        Fancybox.bind('[data-fancybox="gallery"]', {
-            // Your custom options for a specific gallery
-        });
-        
-        // Profile photo preview functionality
-        document.getElementById('profile_photo').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Check file size (max 5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Profile photo must be less than 5MB');
-                    this.value = '';
-                    return;
-                }
-                
-                // Check file type
-                if (!file.type.startsWith('image/')) {
-                    alert('Please select an image file');
-                    this.value = '';
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const previewImg = document.querySelector('.profilePic');
-                    if (previewImg) {
-                        previewImg.src = e.target.result;
-                        previewImg.style.display = 'block';
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // Profile video preview functionality
-        document.getElementById('profile_video').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Check file size (max 50MB)
-                if (file.size > 50 * 1024 * 1024) {
-                    alert('Profile video must be less than 50MB');
-                    this.value = '';
-                    return;
-                }
-                
-                // Check file type
-                if (!file.type.startsWith('video/')) {
-                    alert('Please select a video file');
-                    this.value = '';
-                    return;
-                }
-                
-                const videoContainer = document.querySelector('.col-md-6 .d-flex');
-                if (videoContainer) {
-                    // Remove existing video if any
-                    const existingVideo = videoContainer.querySelector('video');
-                    if (existingVideo) {
-                        existingVideo.remove();
-                    }
-                    
-                    // Create new video element
-                    const video = document.createElement('video');
-                    video.width = '100px';
-                    video.style.borderRadius = '6px';
-                    video.height = 'auto';
-                    video.controls = true;
-                    
-                    const source = document.createElement('source');
-                    source.src = URL.createObjectURL(file);
-                    source.type = file.type;
-                    
-                    video.appendChild(source);
-                    video.appendChild(document.createTextNode('Your browser does not support the video tag.'));
-                    
-                    // Insert video before the file input
-                    const fileInputContainer = videoContainer.querySelector('.w-100');
-                    videoContainer.insertBefore(video, fileInputContainer);
-                }
-            }
-        });
-        
-        // Form submission handling
-        document.getElementById('multiStepForm').addEventListener('submit', function(e) {
-            const submitBtn = document.getElementById('submitBtn');
-            const btnText = submitBtn.querySelector('.btn-text');
-            const btnLoading = submitBtn.querySelector('.btn-loading');
-            
-            // Show loading state
-            btnText.style.display = 'none';
-            btnLoading.style.display = 'inline-block';
-            submitBtn.disabled = true;
-            
-            // Re-enable after 5 seconds if something goes wrong
-            setTimeout(() => {
-                btnText.style.display = 'inline-block';
-                btnLoading.style.display = 'none';
-                submitBtn.disabled = false;
-            }, 5000);
-        });
+        }, 5000);
+    });
+    
+    // Restore active tab from URL parameter or default to step 1
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab') || '1';
+    activateTab(activeTab);
 
-        $(document).ready(function () {
-            $('#colonies').select2({
-                maximumSelectionLength: 30,
-                placeholder: 'Select colonies',
-                tags: true,
-                width: '100%'
+    // Listings / Mandates dynamic fields
+    const maxListings = 15;
+    const container = document.getElementById('listingsContainer');
+    const addBtn = document.getElementById('addListingBtn');
+    let initialListings = window.initialListings ? window.initialListings.split('||').filter(x => x) : [];
+    function createListingRow(value, isFirst) {
+        const div = document.createElement('div');
+        div.className = 'd-flex align-items-center mb-2 listing-row';
+        div.innerHTML = `<input class="form-control" name="listings" value="${value ? value.replace(/"/g, '&quot;') : ''}" placeholder="Listing">` +
+            (isFirst ? '' : `<button type="button" class="btn btn-danger btn-sm ms-2 remove-listing">&times;</button>`);
+        return div;
+    }
+    function renderListings(listings) {
+        container.innerHTML = '';
+        if (!listings || listings.length === 0) {
+            container.appendChild(createListingRow('', true));
+        } else {
+            listings.forEach((val, idx) => {
+                container.appendChild(createListingRow(val, idx === 0));
             });
-            // Set selected values on page load
-            var selected = JSON.parse(document.getElementById('selectedColoniesData').textContent);
-            $('#colonies').val(selected).trigger('change');
+        }
+        updateRemoveButtons();
+    }
+    function updateRemoveButtons() {
+        const rows = container.querySelectorAll('.listing-row');
+        rows.forEach((row, idx) => {
+            const removeBtn = row.querySelector('.remove-listing');
+            if (removeBtn) {
+                removeBtn.style.display = idx === 0 ? 'none' : '';
+            }
         });
-    </script>
+    }
+    addBtn.onclick = function() {
+        const count = container.querySelectorAll('.listing-row').length;
+        if (count < maxListings) {
+            container.appendChild(createListingRow('', false));
+            updateRemoveButtons();
+        }
+    };
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-listing')) {
+            e.target.closest('.listing-row').remove();
+            updateRemoveButtons();
+        }
+    });
+    // Initial render
+    renderListings(initialListings);
+});
+</script>
 </body>
 
 </html>

@@ -81,7 +81,7 @@
                 <p class="m-0">Showing {{ brokers.count }} of {{ total_brokers }} Real Estate Agents</p>
                 <div class="result-section">
                     {% for broker in brokers %}
-                    <div class="card profile-card wow animate__animated animate__fadeIn" data-profile-url="{% url 'broker_profile' slug=broker|profile_slug %}">
+                    <div class="card profile-card wow animate__animated animate__fadeIn" data-profile-url="{% url 'broker_profile' mobile=broker.mobile %}">
                         <div class="card-head">
                             <div class="user-details">
                                 <div class="profile-photo">

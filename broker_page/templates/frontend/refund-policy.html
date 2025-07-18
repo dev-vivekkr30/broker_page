@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Refund Policy | Broker.Page</title>
+
+    <!-- BootStrap Links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Animate JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+</head>
+
+<body>
+    <div class="container-fluid px-0">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary wow animate__animated animate__fadeIn">
+            <div class="container">
+                <a class="navbar-brand" href="#"><img src="{% static 'images/logo.svg' %}" alt="Broker.Page Logo"></a>
+                <a href="{% url 'login' %}" class="login-mob-btn"><img src="{% static 'images/login.svg' %}"
+                        alt="Login"> Login</a>
+                <div class="collapse navbar-collapse me-auto" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="border-btn me-3" aria-current="page" href="{% url 'login' %}">Broker's Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="dark-btn" aria-current="page" href="{% url 'agent_registration' %}">Broker
+                                Registration</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container mt-4">
+            <h4>Refund Policy</h4>
+            <!-- <p><strong>Effective Date:</strong> [Insert Date]<br>
+            <strong>Last Updated:</strong> [Insert Date]</p> -->
+            <p>At Broker.Page, we strive to provide a seamless experience for our users. Please read our Refund Policy carefully before making any payments, as it outlines our terms regarding non-refundable fees and circumstances under which exceptions may apply.</p>
+
+            <h5>1. General Refund Policy</h5>
+            <ul>
+                <li>All payments made on Broker.Page are non-refundable.</li>
+                <li>Paying the registration or verification fee does not guarantee approval or verification—final confirmation is subject to our internal verification process.</li>
+                <li>Once a transaction is completed, no cancellations or refunds will be provided, except in the cases mentioned below.</li>
+                <li>The annual membership fees can be changed any time, without any prior consent or permission.</li>
+            </ul>
+
+            <h5>2. No Refunds for Verification Denial</h5>
+            <ul>
+                <li>If your broker verification application is rejected due to non-compliance or failure to meet criteria, your fee will not be refunded.</li>
+                <li>We encourage all users to ensure they meet the eligibility criteria before making a payment.</li>
+            </ul>
+
+            <h5>3. Chargebacks &amp; Dispute Resolution</h5>
+            <ul>
+                <li>If a user initiates an unwarranted chargeback with their bank or payment provider, Broker.Page reserves the right to block access to services until the dispute is resolved.</li>
+                <li>Any disputes regarding payments should be addressed directly with our support team before initiating a chargeback.</li>
+            </ul>
+
+            <h5>4. Changes to this Refund Policy</h5>
+            <p>Broker.Page reserves the right to modify this Refund Policy at any time. Any updates will be posted on our website, and continued use of our services after policy changes implies acceptance of the new terms.</p>
+
+            <h5>5. Contact Us</h5>
+            <ul>
+                <li>📧 Email: <a style="display: inline;" href="mailto:info@broker.page">info@broker.page</a></li>
+                <li>📍 Address: [Insert Office Address]</li>
+                <li>📞 Phone: +91 9876543210</li>
+            </ul>
+        </div>
+        {% include 'frontend/includes/footer.html' %}
+    </div>
+</body>
+
+</html> 

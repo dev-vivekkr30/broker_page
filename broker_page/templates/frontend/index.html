@@ -160,43 +160,7 @@
         </section>
 
         <!-- Footer Section -->
-        <footer class="container-fluid wow animate__animated animate__fadeIn">
-            <div class="container">
-                <div class="footerSection">
-                    <a href="#"><img src="{% static 'images/logo.svg' %}" alt="Footer Logo"></a>
-                    <div class="footer-col">
-                        <div>
-                            <h6>Quick Link</h6>
-                            <div class="footer-list">
-                                <a href="#">About</a>
-                                <a href="#">Contact</a>
-                            </div>
-                        </div>
-                        <div>
-                            <h6>Company</h6>
-                            <div class="footer-list">
-                                <a href="#">Privacy Policy</a>
-                                <a href="#">Terms & Conditions</a>
-                            </div>
-                        </div>
-                        <div>
-                            <a href="#" class="text-white mb-2"><img src="{% static 'images/red-mail.svg' %}" alt="Email"> info@broker.page</a>
-                            <a href="#" class="text-white"><img src="{% static 'images/red-call.svg' %}" alt="Phone"> +91 9876543210</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="copyright">
-                    <p class="m-0">Copyright © 2023 Broker.Page. All rights reserved.</p>
-                    <p class="m-0">Reg No. DEL / 1025 / 05 / 2025</p>
-                    <div class="social-media d-flex gap-2">
-                        <a href="#"><img src="{% static 'images/facebook.svg' %}" alt="Facebook"></a>
-                        <a href="#"><img src="{% static 'images/insta.svg' %}" alt="Instagram"></a>
-                        <a href="#"><img src="{% static 'images/twitter.svg' %}" alt="Twitter"></a>
-                        <a href="#"><img src="{% static 'images/linkedin.svg' %}" alt="LinkedIn"></a>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        {% include 'frontend/includes/footer.html' %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
